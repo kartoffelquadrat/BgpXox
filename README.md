@@ -17,7 +17,7 @@ Key features of this implementation are:
 
 ### Architecture
 
-Xox is split into a RESTful API backend and a Web-client.
+Xox is split into a RESTful API backend and a Web-Interface.
 
  * The web UI is based on an [existing open source implementation](https://github.com/angle943/tic-tac-toe).
  * The API backend is coded in Spring Boot and exposes the following resources:  
