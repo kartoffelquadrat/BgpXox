@@ -1,6 +1,6 @@
 # Xox
 
-A [Lobby-Service](https://github.com/kartoffelquadrat/LobbyService) compatible sample game.
+A [Lobby-Service](https://github.com/kartoffelquadrat/LobbyService) compatible sample game service.
 
 ## About
 
