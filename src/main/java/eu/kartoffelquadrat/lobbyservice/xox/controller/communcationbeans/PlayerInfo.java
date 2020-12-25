@@ -1,4 +1,4 @@
-package eu.kartoffelquadrat.lobbyservice.xox.controller.beans;
+package eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans;
 import eu.kartoffelquadrat.lobbyservice.xox.model.PlayerInfoReadOnly;
 
 /**
@@ -37,4 +37,6 @@ public class PlayerInfo implements PlayerInfoReadOnly {
     public String toString() {
         return "Name: " + name + "- PreferredColour: " + preferredColour;
     }
+
+
 }

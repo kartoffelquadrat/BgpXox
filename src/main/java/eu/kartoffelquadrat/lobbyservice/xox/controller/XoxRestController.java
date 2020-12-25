@@ -6,7 +6,7 @@
  */
 package eu.kartoffelquadrat.lobbyservice.xox.controller;
 
-import eu.kartoffelquadrat.lobbyservice.xox.controller.beans.LauncherInfo;
+import eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans.LauncherInfo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -15,8 +15,8 @@ import com.google.gson.Gson;
 /***
  * Rest controller for API endpoints of the Xox game.
  */
-@RestController
-public class RestController {
+@XoxRestController
+public class XoxRestController {
 
     private final String LOG_START = "\u001B[38;5;184m";
     private final String LOG_END = "\u001B[m";

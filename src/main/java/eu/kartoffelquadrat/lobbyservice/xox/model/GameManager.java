@@ -1,6 +1,6 @@
 package eu.kartoffelquadrat.lobbyservice.xox.model;
 
-import eu.kartoffelquadrat.lobbyservice.xox.controller.beans.PlayerInfo;
+import eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans.PlayerInfo;
 
 /**
  * General game manager entity that serves as entry point for access to the model. Adherent classes can be injected into
@@ -16,7 +16,7 @@ public interface GameManager {
      * @param gameId
      * @return
      */
-    Game getGameById(long gameId);
+    XoxGame getGameById(long gameId);
 
     /**
      * Adds a new blank game to the manager
@@ -26,7 +26,7 @@ public interface GameManager {
      * @param secondPlayer parameters for the second player
      * @return
      */
-    Game addGame(long gameId, PlayerInfo startPlayer, PlayerInfo secondPlayer);
+    XoxGame addGame(long gameId, PlayerInfo startPlayer, PlayerInfo secondPlayer);
 
     /**
      * Removes an indexed game. The action is rejected adn a IllegalModelAccessException is thrown, if the game is not
@@ -34,7 +34,7 @@ public interface GameManager {
      *
      * @param GameId as the game to by removed
      * @param evenIfUnfinished as a safety flag to prevent unitended deletion of running games
-     * @throws IllegalModelAccessException in case the game is still runnung by the previous parameter is set to false
+     * @throws ModelAccessException in case the game is still runnung by the previous parameter is set to false
      */
-    void removeGame(long GameId, boolean evenIfUnfinished);
+    void removeGame(long gameId, boolean evenIfUnfinished);
 }

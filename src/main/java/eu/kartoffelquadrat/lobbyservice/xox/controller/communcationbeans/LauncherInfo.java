@@ -1,4 +1,4 @@
-package eu.kartoffelquadrat.lobbyservice.xox.controller.beans;
+package eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans;
 
 import java.util.LinkedList;
 

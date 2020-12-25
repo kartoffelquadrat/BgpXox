@@ -19,4 +19,12 @@ public interface PlayerInfoReadOnly {
      * @return
      */
     String getPreferredColour();
+
+    /**
+     * Equals comparison. Only matches names. Ignores upper/lower cases.
+     *
+     * @param other as the player object to compare with.
+     * @return a boolean that indicates whether the names of the provided player objects match.
+     */
+    boolean equals(PlayerInfoReadOnly other);
 }
