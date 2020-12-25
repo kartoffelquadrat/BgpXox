@@ -6,7 +6,7 @@ A [Lobby-Service](https://github.com/kartoffelquadrat/LobbyService) compatible s
 
 This repository contains the sources for an inofficial LobbyService demo Game. It implements the game *Xox*, also known as *Tic Tac Toe*.  
 
- > **Xox is an optional component for a LS-centrist Micro-Service Architecture. It serves as a sample project for game developers.**
+ > **Xox is an optional component for a LS-centrist Micro-Service Architecture. It serves as sample project for game developers.**
 
 Key features of this implementation are:
 
@@ -15,6 +15,7 @@ Key features of this implementation are:
  * Dynamic maintenance of parallel game sessions at runtime.
  * A self-hosted web-interface, strictly limited to game-specific functionality.
 
+ > Note: The web UI is based on an [existing open source implementation](https://github.com/angle943/tic-tac-toe).
 
 
 ## Setup
