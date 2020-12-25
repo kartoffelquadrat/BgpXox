@@ -11,8 +11,8 @@ This repository contains the sources of an inofficial LobbyService demo Game.
 Key features of this implementation are:
 
  * Registration at the Lobby-Service on power-up / un-registration on shutdow.
- * No dedicated user management. Users are identified vie the Lobby-Service, which acts as Single-Sign-On. Whenever required, token based user authentication is delegated to the Lobby-Serive at runtime.
- * Dynamic maintenance of parallel game sessions at runtime.
+ * No dedicated user management. Users are identified via the Lobby-Service, which acts as Single-Sign-On. Token verification is delegated to the LS, whenever user authentication is required.
+ * Dynamic maintenance of parallel game sessions at runtime, accessible through [contractually stipulated REST endpoints](https://github.com/kartoffelquadrat/LobbyService/blob/master/markdown/game-dev.md#callbacks).
  * A self-hosted web-interface, strictly limited to game-specific functionality.
 
 ### Architecture
