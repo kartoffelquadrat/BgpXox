@@ -5,10 +5,16 @@ A [Lobby-Service](https://github.com/kartoffelquadrat/LobbyService) compatible s
 ## About
 
 This repository contains the sources for an inofficial LobbyService demo Game. It implements the game *Xox*, also known as *Tic Tac Toe*.  
-Alkthough minimal, this implementation fully adheres to interface and communication requirements stipulated by the Lobby Service, notably:
 
- * Registration at the Lobby-Service on power-up.
+ > **Xox is an optional component for a LS-centrist Micro-Service Architecture. It serves as a sample project for game developers.**
+
+Key features of this implementation are:
+
+ * Registration at the Lobby-Service on power-up / un-registration on shutdow / un-registration on shutdown
  * No internal user management, the Lobby-Serive is used as Single-Sign-On service. Whenever required, token based user authentication is delegated to the Lobby-Serive at runtime.
+ * Dynamic maintenance of parallel game sessions at runtime.
+ * A self-hosted web-interface, strictly limited to game-specific functionality.
+
 
 
 ## Setup
