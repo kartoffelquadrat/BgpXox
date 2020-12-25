@@ -1,0 +1,50 @@
+# Xox
+
+A [Lobby-Service](https://github.com/kartoffelquadrat/LobbyService) compatible sample game.
+
+## About
+
+This repository contains the sources for an inofficial LobbyService demo Game. It implements the game *Xox*, also known as *Tic Tac Toe*.  
+Alkthough minimal, this implementation fully adheres to interface and communication requirements stipulated by the Lobby Service, notably:
+
+ * Registration at the Lobby-Service on power-up.
+ * No internal user management, the Lobby-Serive is used as Single-Sign-On service. Whenever required, token based user authentication is delegated to the Lobby-Serive at runtime.
+
+
+## Setup
+
+This repository ~~integrates as an optional git submodule into the LobbyService sources~~ and ~~comes with a preconfigured docker-compose file for simulatenous startup~~.
+
+### Native Deploment
+
+This first option 
+
+ * Clone this repository
+ * Power the service up:  
+```mvn exec:spring-boot```
+ * Shut the serivce down (implicitly unregisters the game at the LS). Type ```enter```.
+
+### Docker Compose
+
+This second option allows an automated container-based power up with the Lobby-Service Microservice architecture.
+
+ > Not yet supported!
+
+
+## Usage
+
+*Xox* can not be used as standalone, you need the LobbyService to start new sessions and provide user authentication. *Xox* does not provide a dedicated UI for that, it can therefore only be used in combination with the [*Lobby Service Web Interface*](https://github.com/kartoffelquadrat/LobbyServiceWebInterface).
+
+ * All access to the web-ui requires login.
+   * Administrators are directly forwarded to an administration panel. That allows manipulation of user data.
+   * Users are forwarded to a game lobby that allows creation and participation in game sessions.
+
+## Contact / Pull Requests
+
+Contact information for bug reports and pull requests:
+
+ * Author: Maximilian Schiedermeier ![email](markdown/email.png)
+ * Github: [Kartoffelquadrat](https://github.com/kartoffelquadrat)
+ * Webpage: [McGill University, School of Computer Science](https://www.cs.mcgill.ca/~mschie3)
+ * License: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
