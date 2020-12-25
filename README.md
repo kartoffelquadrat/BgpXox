@@ -10,7 +10,7 @@ This repository contains the sources for an inofficial LobbyService demo Game. I
 
 Key features of this implementation are:
 
- * Registration at the Lobby-Service on power-up / un-registration on shutdow / un-registration on shutdown
+ * Registration at the Lobby-Service on power-up / un-registration on shutdow.
  * No internal user management, the Lobby-Serive is used as Single-Sign-On service. Whenever required, token based user authentication is delegated to the Lobby-Serive at runtime.
  * Dynamic maintenance of parallel game sessions at runtime.
  * A self-hosted web-interface, strictly limited to game-specific functionality.
