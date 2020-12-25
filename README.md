@@ -20,8 +20,8 @@ Key features of this implementation are:
 Xox is split into a RESTful API backend and a Web-client.
 
  * The web UI is based on an [existing open source implementation](https://github.com/angle943/tic-tac-toe).
- * The API backend is coded in Spring Boot and exposes the following API:  
-(The dashed box highlights the endpoints stipulated by the Lobby-Service)  
+ * The API backend is coded in Spring Boot and exposes the following resources:  
+(Dashed box highlights the endpoints stipulated by the Lobby-Service)  
 ![api](markdown/restif.png)
 
 ## Setup
