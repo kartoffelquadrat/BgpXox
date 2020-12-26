@@ -26,6 +26,11 @@ Xox is split into a RESTful API backend and a Web-Interface.
 
 ## Setup
 
+Xox requires a dedicated admin account initiated at the LS. This account is not present by default. Default credentials are:
+
+ * Username: ```Xox```
+ * Password: ```laaPhie*aiN0```
+
 This repository ~~integrates as an optional git submodule into the LobbyService sources~~ and ~~comes with a preconfigured docker-compose file for simulatenous startup~~.
 
 ### Native Deploment

@@ -29,6 +29,12 @@ public class PlayerInfo implements PlayerInfoReadOnly {
         return preferredColour;
     }
 
+    @Override
+    public boolean equals(PlayerInfoReadOnly other) {
+        return false;
+        // Todo: implement;
+    }
+
     public void setPreferredColour(String preferredColour) {
         this.preferredColour = preferredColour;
     }
