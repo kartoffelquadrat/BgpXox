@@ -17,10 +17,8 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans.GameServerParameters;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import java.sql.SQLOutput;
 import java.util.Scanner;
 
 /**
@@ -34,40 +32,48 @@ public class Launcher {
     private static final String AUTH_NAME = "xox";
     private static final String AUTH_PASSWORD = "laaPhie*aiN0";
 
-    // ToDo:L read credentials from properties / docker-param
+    // ToDo: Read credentials from properties / docker-param
     // ToDo: Pass LS location as parameter.
     // ToDo: Configure own location as parameter.
-    private static final String LS_LOCATION = "http://127.0.0.1:4242"; // Unirest.config().defaultBaseUrl("http://homestar.com")
-    private static final GameServerParameters REGISTRATION_PARAMETERS = new GameServerParameters("Xox", "http://127.0.0.1:4244/Xox", 2, 2, "true");
+    private static final String LS_LOCATION = "http://127.0.0.1:4242";
+    private static final GameServerParameters REGISTRATION_PARAMETERS = new GameServerParameters(GAME_SERVICE_NAME, "http://127.0.0.1:4244/" + GAME_SERVICE_NAME, 2, 2, "true");
 
     public static void main(String[] args) {
 
-        SpringApplication.run(Launcher.class, args);
+        // Power up Xox API backend
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(Launcher.class, args);
 
-
-        // For testing: Re-register on every return press.
-        while (true) {
-            System.out.println("------------------------------\nHit enter to register.");
-            Scanner sc = new Scanner(System.in);
-            String line = sc.nextLine();
-            System.out.println(line);
-            System.out.println("Re-registering Xox at LS.");
-
-            try {
-                System.out.println("Trying to register...");
-                registerAtLobbyService();
-            } catch (UnirestException unirestException) {
-                System.out.println("Registration failed. Cause: " + unirestException.getMessage());
-            }
+        // Register Xox at LS-GameRegistry
+        try {
+            registerAtLobbyService();
+        } catch (UnirestException ue) {
+            throw new RuntimeException("LobbyService not reachable at provided location: " + LS_LOCATION);
         }
+
+        // Keep alive until "Return-Key" pressed
+        System.out.println("Xox running and registered at the LobbyService. Hit enter to unregister and shutdown.");
+        new Scanner(System.in).nextLine();
+
+        // Unregister Xox at LS-GameRegistry
+        System.out.println("Unregistering...");
+        try {
+            unregisterAtLobbyService();
+        } catch (UnirestException ue) {
+            throw new RuntimeException("LobbyService not reachable at provided location: " + LS_LOCATION);
+        }
+
+        // Shut down Xox backend API
+        System.out.println("Shutting down API...");
+        applicationContext.close();
+        System.out.println("[Xox terminated]");
     }
 
     /**
-     * Retrieves an OAuth2 token that allows registration of Xox as a new GameService at the LS. Credentials of an LS
-     * admin account are required.
+     * Retrieves an OAuth2 token that allows registration / unregistration of Xox as a new GameService at the LS.
+     * Credentials of an LS admin account are required.
      *
-     * @return
-     * @throws UnirestException
+     * @return a string encoded OAuth token. Special characters are not yet URL enoded.
+     * @throws UnirestException in case of a communication error with the LS
      */
     private static String getToken() throws UnirestException {
 
@@ -79,53 +85,58 @@ public class Launcher {
                 .body(bodyString)
                 .asString();
         if (response.getStatus() != 200)
-            throw new RuntimeException("LS rejected Xox credentials");
+            throw new RuntimeException("LS rejected Xox credentials. Make sure the \"xox\" user exists!");
+
+        // Extract token of response JSON, escape potential special characters
         JsonObject responseJson = new JsonParser().parse(response.getBody()).getAsJsonObject();
         String token = responseJson.get("access_token").toString().replaceAll("\"", "");
-        token = token.replaceAll("\\+", "%2B");
-//        token = token.replaceAll("\\=", "%3D");
-        System.out.println("Retrieved access-token: "+token);
         return token;
     }
 
+    /**
+     * Registers Xox as a Game-service at the LS game registry. Admin credentials are required to authorize this
+     * operation.
+     *
+     * @throws UnirestException in case the communication with the LobbyService failed or the LobbyService rejected a
+     *                          registration of Xox.
+     */
     private static void registerAtLobbyService() throws UnirestException {
-        String accessToken= getToken();
+
+        // Get a valid access token, to authenticate for the registration.
+        String accessToken = getToken();
+
+        // Build and send an authenticated registration request to the LS API.
         String bodyJson = new Gson().toJson(REGISTRATION_PARAMETERS);
-        System.out.println(bodyJson);
-        System.out.println(accessToken);
         HttpResponse<String> response = Unirest
-              //.put("http://127.0.0.1:4242/api/gameservices/Xox")
-                  .put(LS_LOCATION + "/api/gameservices/Xox")
-                .queryString("access_token", accessToken)
-//                .header("Authorization:Bearer", accessToken)
+                .put(LS_LOCATION + "/api/gameservices/Xox")
+                .header("Authorization", "Bearer "+ accessToken)
                 .header("Content-Type", "application/json")
                 .body(bodyJson)
                 .asString();
-        System.out.println(response.getBody());
-        System.out.println("Server replied with: " + response.getStatus()+ " - "+response.getStatusText());
 
+        // Verify the registration was accepted
+        if (response.getStatus() != 200)
+            System.out.println("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+    }
 
-//        RestTemplate rest = new RestTemplate();
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Type", "application/json");
-//
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("{\n");
-//        sb.append("    \"location\": \"http://127.0.0.1:4243/Xox\",\n");
-//        sb.append("    \"maxSessionPlayers\": \"5\",\n");
-//        sb.append("    \"minSessionPlayers\": \"3\",\n");
-//        sb.append("    \"name\": \"Xox\",\n");
-//        sb.append("    \"webSupport\": \"true\"\n");
-//        sb.append("}");
-//        String body = sb.toString();
-//
-//        HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
-//        ResponseEntity<String> responseEntity = rest.exchange("http://127.0.0.1:4242/api/gameservices/Xox?access_token=t7PlQHzSOfZzEwSasujfb%2BXjZFo=", HttpMethod.PUT, requestEntity, String.class);
-//        HttpStatus httpStatus = responseEntity.getStatusCode();
-//        int status = httpStatus.value();
-//        String response = responseEntity.getBody();
-//        System.out.println("Response status: " + status);
-//        System.out.println(response);
+    /**
+     * Revoke a previous registration at the LS game registry. This is typically performed prior to shutdown. Admin
+     * credentials are required to authorize this operation.
+     */
+    private static void unregisterAtLobbyService() throws UnirestException {
+
+        // Get a valid access token, to authenticate for the un-registration.
+        String accessToken = getToken();
+
+        // Build and send an authenticated un-registration request to the LS API.
+        HttpResponse<String> response = Unirest
+                .delete(LS_LOCATION + "/api/gameservices/Xox")
+                .header("Authorization", "Bearer "+ accessToken)
+                .asString();
+
+        // Verify the registration was accepted
+        if (response.getStatus() != 200)
+            System.out.println("LobbyService rejected unregistration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
     }
 }
 
