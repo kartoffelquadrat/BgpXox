@@ -6,7 +6,10 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 
 /**
- * Represents the state of a running game.
+ * Represents the state of a Xox running game.
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 public class XoxGame implements Game {
 

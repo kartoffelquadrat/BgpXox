@@ -13,6 +13,9 @@ import java.util.Map;
  * and not backend by a dedicated database. Indexes games by ID (provided by the LobbyService) This class is
  * instantiated and maintained as Singleton bean by the Spring Bean manager (which allows autowiring in the controller,
  * where needed.)
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 @Component
 public class XoxLocalGameManager implements GameManager {

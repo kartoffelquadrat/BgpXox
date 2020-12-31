@@ -5,6 +5,9 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 /**
  * Represents the only kind of blackboard action required in Xox. The Claim-Field action encodes a position, specified
  * through x and y coordinates and a player who claims the field. The origin is top-left, index counting starts at 0.
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 public class XoxClaimFieldAction {
 

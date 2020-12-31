@@ -4,6 +4,9 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 
 /**
  * Encodes minimal information required for launch instructions.
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 public class Player implements PlayerReadOnly {
 

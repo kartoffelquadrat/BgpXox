@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component;
  * application.properties. Configurable annotation allows injection of primitives form application.properties as class
  * fields at runtime.
  *
- * @Author Maximilian Schiedermeier, 2021.
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 @Component
 public class Registrator {

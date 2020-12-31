@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
  * the contoller. On the long run there will by multiple implementations, depending on whether an in-RAM model
  * management or Database mangament (which allows for multiple instances of the service to be deployed simultaneously)
  * is desired.
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 @Component
 public interface GameManager {

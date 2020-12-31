@@ -3,6 +3,9 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans
 /**
  * Just a bean to encapsulate all data transferred to the LS upon registration of Xox as a new gameserver. This class
  * can be copied and reused as is in other game-implementations. Only the constructor parameters need to be adjusted.
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 public class GameServerParameters {
 

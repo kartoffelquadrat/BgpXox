@@ -10,6 +10,9 @@ import java.util.LinkedList;
 
 /**
  * Analyzes a Xox game and generates a collection of valid actions for a player.
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 public class XoxActionGenerator implements ActionGenerator {
 

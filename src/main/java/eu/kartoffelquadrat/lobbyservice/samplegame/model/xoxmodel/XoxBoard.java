@@ -3,6 +3,13 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel;
 
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Board;
 
+/**
+ * Xox specific implementation of the board interface. Encodes 3x3 matrix with individually maintained state model per
+ * cell.
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
+ */
 public class XoxBoard implements Board {
 
     // States of cells are encoded by Characters:
@@ -32,6 +39,7 @@ public class XoxBoard implements Board {
 
     /**
      * Insepcts the cells and returns true if three equal symbols lie on row, column or main diagonal.
+     *
      * @return
      */
     public boolean isThreeInALine() {

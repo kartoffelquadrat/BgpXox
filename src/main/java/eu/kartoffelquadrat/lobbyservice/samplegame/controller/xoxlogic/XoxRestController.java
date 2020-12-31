@@ -7,7 +7,6 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.GameRestController;
-import eu.kartoffelquadrat.lobbyservice.samplegame.model.GameManager;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxLocalGameManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 /***
  * Rest controller for API endpoints of the Xox game. Apart from rtequest authorization, no business logic is contained
  * in this class.
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 @RestController
 public class XoxRestController implements GameRestController {

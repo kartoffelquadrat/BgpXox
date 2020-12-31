@@ -4,6 +4,9 @@ import java.util.LinkedList;
 
 /**
  * Bean that compiles all information of the jeson object received for every session start.
+ *
+ * @Author: Maximilian Schiedermeier
+ * @Date: December 2020
  */
 public class LauncherInfo {
 
