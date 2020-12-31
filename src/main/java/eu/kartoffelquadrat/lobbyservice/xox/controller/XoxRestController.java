@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import com.google.gson.Gson;
+import org.springframework.web.servlet.ModelAndView;
 
 /***
  * Rest controller for API endpoints of the Xox game.
@@ -72,7 +73,7 @@ public class XoxRestController {
 //    }
 
     /**
-     * Debug endpoint. Can be accesses at: http://127.0.0.1:4243/FunnyDemoGameServer/online
+     * Debug endpoint. Can be accesses at: http://127.0.0.1:4244/Xox/online
      */
     @GetMapping("/online")
     public String getOnlineFlag() {

@@ -80,6 +80,8 @@ public class Launcher {
         String bodyString = "grant_type=password&username=" + AUTH_NAME + "&password=" + AUTH_PASSWORD;
         HttpResponse<String> response = Unirest
                 .post(LS_LOCATION + "/oauth/token")
+                    // Authorization parameter is the base64 encoded string: "bgp-client-name:bgp-client-pw".
+                    // Can remain unchanged for future games.
                 .header("Authorization", "Basic YmdwLWNsaWVudC1uYW1lOmJncC1jbGllbnQtcHc=")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(bodyString)
