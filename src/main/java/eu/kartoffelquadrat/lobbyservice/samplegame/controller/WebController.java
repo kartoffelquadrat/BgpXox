@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class WebController {
 
+    /**
+     * WEB-UI endpoint to retrieve a webpage that then dynamically loads game data from other game-server endpoints.
+     *
+     * @return HTML code of a webclient.
+     */
     @RequestMapping("/webui/games/{12345}")
     public String getLandingPage() {
         return "xox";

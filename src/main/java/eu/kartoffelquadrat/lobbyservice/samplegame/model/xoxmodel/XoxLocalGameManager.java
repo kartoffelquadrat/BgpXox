@@ -29,14 +29,21 @@ public class XoxLocalGameManager implements GameManager {
     }
 
     @Override
-    public XoxGame addGame(long gameId, Player startPlayer, Player secondPlayer) {
+    public boolean isExistentGameId(long gameId) {
+        return games.containsKey(gameId);
+    }
+
+    @Override
+    public XoxGame addGame(long gameId, Player[] players) {
 
         // Refuse creation if gameid collides with existing game.
         if (games.containsKey(gameId))
             throw new ModelAccessException("Game can not be created, the requested ID " + gameId + "is already in use.");
 
         // Create a new game and add it, then return the game entity.
-        games.put(gameId, new XoxGame(startPlayer, secondPlayer));
+        if (players.length != 2)
+            throw new ModelAccessException("Game can not be created, exactly two players are required to play Xox.");
+        games.put(gameId, new XoxGame(players[0], players[1]));
         return getGameById(gameId);
     }
 

@@ -1,9 +1,11 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.Action;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.ActionGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxBoard;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -14,14 +16,15 @@ import java.util.LinkedList;
  * @Author: Maximilian Schiedermeier
  * @Date: December 2020
  */
+@Component
 public class XoxActionGenerator implements ActionGenerator {
 
     /**
-     * @param game as the game instance for which the
+     * @param game   as the game instance for which the
      * @param player as the player object defining the participant for why tha action bundle shall be created.
      * @return
      */
-    public static Collection<XoxClaimFieldAction> generateActions(XoxGame game, PlayerReadOnly player) {
+    public Action[] generateActions(XoxGame game, PlayerReadOnly player) {
 
         // Verify that the provided player is a game participant
         if (!isParticipant(game, player))
@@ -29,7 +32,7 @@ public class XoxActionGenerator implements ActionGenerator {
 
         // If not the player's turn, return an empty set. (Check is performed by comparing the name of the current player)
         if (player.equals(game.getCurrentPlayerName()))
-            return new LinkedList<>();
+            return new Action[0];
 
         // Iterate over board and add an action for every unoccupied cell.
         return emptyCellsToActions(game.getBoard(), player);
@@ -39,22 +42,22 @@ public class XoxActionGenerator implements ActionGenerator {
      * Verifies if a provided player is a valid participant (player) of a Xox game. The verification runs a case
      * sensitive string comparison of the player names.
      *
-     * @param game       as the xox game.
+     * @param game   as the xox game.
      * @param player as the player object of the participant to test.
      * @return a boolean, indicating whether the provided name is a valid player name.
      */
     private static boolean isParticipant(XoxGame game, PlayerReadOnly player) {
-        return game.getPlayerInfo(0).getName().equals(player) ||
-                game.getPlayerInfo(1).getName().equals(player);
+        return game.getPlayerInfo(0).getName().equals(player.getName()) ||
+                game.getPlayerInfo(1).getName().equals(player.getName());
     }
 
     /**
      * Iterates over all cells of a provided Xox-Board and creates an action object for every unoccupied cell.
      *
      * @param board as the 3x3 grid to be analyzed.
-     * @return
+     * @return an array of possible lay actions.
      */
-    private static Collection<XoxClaimFieldAction> emptyCellsToActions(XoxBoard board, PlayerReadOnly player) {
+    private static Action[] emptyCellsToActions(XoxBoard board, PlayerReadOnly player) {
         Collection<XoxClaimFieldAction> actions = new LinkedList<>();
 
         // Iterate over board
@@ -66,7 +69,7 @@ public class XoxActionGenerator implements ActionGenerator {
             }
         }
 
-        return actions;
+        return actions.toArray(new Action[actions.size()]);
     }
 }
 

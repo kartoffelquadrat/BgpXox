@@ -13,31 +13,38 @@ import org.springframework.stereotype.Component;
  * @Date: December 2020
  */
 @Component
-public interface GameManager {
+public interface GameManager<T extends Game> {
 
     /**
      * Retrieves a specific game, by Id.
      *
-     * @param gameId
-     * @return
+     * @param gameId as the game to look up.
+     * @return the referenced game, if found.
      */
-    Game getGameById(long gameId);
+    T getGameById(long gameId);
+
+    /**
+     * Tells whether a provided game id is known.
+     *
+     * @param gameId as the game to look up.
+     * @return true if the provided id can be resolved to a game, false otherwise.
+     */
+    boolean isExistentGameId(long gameId);
 
     /**
      * Adds a new blank game to the manager
      *
-     * @param gameId       id provided by the lobby-service
-     * @param startPlayer  parameters for the player who begins
-     * @param secondPlayer parameters for the second player
+     * @param gameId  id provided by the lobby-service
+     * @param players as game participants in the order of joining
      * @return
      */
-    Game addGame(long gameId, Player startPlayer, Player secondPlayer);
+    T addGame(long gameId, Player[] players);
 
     /**
      * Removes an indexed game. The action is rejected adn a IllegalModelAccessException is thrown, if the game is not
      * yet finished, but the corresponding flag is set to false.
      *
-     * @param gameId as the game to by removed
+     * @param gameId           as the game to by removed
      * @param evenIfUnfinished as a safety flag to prevent unitended deletion of running games
      * @throws ModelAccessException in case the game is still runnung by the previous parameter is set to false
      */

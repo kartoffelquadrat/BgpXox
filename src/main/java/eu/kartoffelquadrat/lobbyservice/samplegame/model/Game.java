@@ -9,8 +9,18 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.model;
 public interface Game {
 
     /**
+     * Look up a player by name
+     *
+     * @param name as the name of the player to look up.
+     * @return PlayerReadOnly as the matching player object, if associated. Throws a ModelAccessException if the
+     * provided player is not associated to this game object.
+     */
+    PlayerReadOnly getPlayerByName(String name);
+
+    /**
      * Retrieves the board of a generic game.
+     *
      * @return
      */
-    public Board getBoard();
+    Board getBoard();
 }

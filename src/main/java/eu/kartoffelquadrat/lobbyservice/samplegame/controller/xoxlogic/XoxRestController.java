@@ -6,9 +6,18 @@
  */
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
+import com.google.gson.Gson;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.ActionGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.GameRestController;
-import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxLocalGameManager;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.LauncherInfo;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Player;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.Game;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.GameManager;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 /***
@@ -21,60 +30,90 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class XoxRestController implements GameRestController {
 
-    @Autowired
-    private XoxLocalGameManager gameManager;
+    private GameManager<XoxGame> gameManager;
+
+    private ActionGenerator actionGenerator;
+
+    private String gameServiceName;
+
+    public XoxRestController(
+            @Autowired GameManager gameManager,
+            @Autowired ActionGenerator actionGenerator,
+            @Value("${gameservice.name}") String gameServiceName) {
+        this.gameManager = gameManager;
+        this.gameServiceName = gameServiceName;
+    }
 
     /**
-     * REST endpoint to start a new game (originating a launched session).
-     *
-     * @param gameid       as the BGP generated ID of the game.
-     * @param launcherInfo as all additional information required to launch the game (players, colors, seating-order,
-     *                     start player.)
-     */
-//    @PutMapping(value = "/api/games/{gameid}", consumes = "application/json; charset=utf-8")
-//    public void startGame(@PathVariable long gameid, @RequestBody LauncherInfo launcherInfo) {
-//
-//        System.out.println(LOG_START + "Received request to start a new game (" + gameid + ") with parameters: " + new Gson().toJson(launcherInfo) + LOG_END);
-//        if(launcherInfo == null || launcherInfo.gameServer == null) {
-//            System.out.println(LOG_START + "REJECTED! Request body has bad format." + LOG_END);
-//            return;}
-//        if (launcherInfo.gameServer.equals(Launcher.GAME_SERVICE_NAME))
-//            System.out.println(LOG_START + "REJECTED! Game service does not match." + LOG_END);
-//        else
-//            games.add(gameid);
-//    }
-
-    /**
-     * REST endpoint to delete a running game.
-     *
-     * @param gameid as the id of the game to delete.
-     */
-//    @DeleteMapping("/api/games/{gameid}")
-//    public void stopGame(@PathVariable long gameid) {
-//        System.out.println(LOG_START + "Received request to stop game (" + gameid + ")." + LOG_END);
-//        if (!games.contains(gameid))
-//            System.out.println(LOG_START + "ERROR! No game with provided id is currently running." + LOG_END);
-//    }
-
-    /**
-     * WEB-UI endpoint to retrieve a webpage that then dynamically loads game data from other game-server endpoints.
-     *
-     * @param gameid as the id of the game to display.
-     * @return HTML code of a webclient.
-     */
-//    @GetMapping("/ui/games/{gameid}")
-//    public String getGameWebUi(@PathVariable long gameid) {
-//        System.out.println(LOG_START + "Received request for game webui (" + gameid + ")."+LOG_END);
-//        if (!games.contains(gameid))
-//            System.out.println(LOG_START + "ERROR! No game with provided id is currently running."+LOG_END);
-//        return "---Webpage for game " + gameid + " here---";
-//    }
-
-    /**
-     * Debug endpoint. Can be accesses at: http://127.0.0.1:4244/Xox/online
+     * Debug endpoint. Can be accessed e.g. at: http://127.0.0.1:4244/Xox/online
      */
     @GetMapping("/online")
     public String getOnlineFlag() {
         return "Xox is happily running.";
+    }
+
+    @Override
+    @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
+    public void launchGame(@PathVariable long gameId, LauncherInfo launcherInfo, String token) {
+        if (launcherInfo == null || launcherInfo.getGameServer() == null)
+            throw new LogicException("LauncherInfo provided by Lobby Service did not specify a matching Service name.");
+        if (!launcherInfo.getGameServer().equals(gameServiceName))
+            throw new LogicException("LauncherInfo provided by Lobby Service did not specify a matching Service name.");
+        if (gameManager.isExistentGameId(gameId))
+            throw new LogicException("Game can not be launched. Id is already in use.");
+        else {
+            gameManager.addGame(gameId, launcherInfo.getPlayers().toArray(new Player[launcherInfo.getPlayers().size()]));
+        }
+    }
+
+    @Override
+    @DeleteMapping("/api/games/{gameId}")
+    public void deleteGame(@PathVariable long gameId, String token) {
+
+        // Verify the provided game id is valid
+        if (!gameManager.isExistentGameId(gameId))
+            throw new ModelAccessException("Game can not be removed. No game associated to provided gameId");
+
+        // ToDo: Verify how this canges if a creator token is used. Inspect LS sources if termination of running games is allowed for creators.
+        gameManager.removeGame(gameId, true);
+    }
+
+    @Override
+    public String getBoard(@PathVariable long gameId, @RequestParam(required = false) String hash) {
+
+        // ToDo: implement long polling
+
+        if(!gameManager.isExistentGameId(gameId))
+            throw new ModelAccessException("Can not retrieve board for game "+gameId+". Not a valid game id.");
+
+        return new Gson().toJson(gameManager.getGameById(gameId));
+    }
+
+    @Override
+    public String getPlayers(@PathVariable long gameId) {
+
+        if(!gameManager.isExistentGameId(gameId))
+            throw new ModelAccessException("Can not retrieve players for game "+gameId+". Not a valid game id.");
+
+        return new Gson().toJson(gameManager.getGameById(gameId).getBoard());
+    }
+
+    @Override
+    public String getActions(@PathVariable long gameId, String player, String token) {
+
+        if(!gameManager.isExistentGameId(gameId))
+            throw new ModelAccessException("Can not retrieve players for game "+gameId+". Not a valid game id.");
+
+        // ToDo: verify token belongs to player
+
+        // ToDo: verify player is participant
+
+        // ToDo: verify if its the players turn
+
+        // ToDo: resolve player to player object... or convert down call stack below...
+
+        XoxGame xoxGame = gameManager.getGameById(gameId);
+        PlayerReadOnly playerObject = xoxGame.getPlayerByName(player);
+        return new Gson().toJson(actionGenerator.generateActions(xoxGame, playerObject));
     }
 }
