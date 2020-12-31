@@ -1,6 +1,8 @@
-package eu.kartoffelquadrat.lobbyservice.xox.model;
+package eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel;
 
-import eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans.PlayerInfo;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Player;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.GameManager;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
@@ -13,7 +15,7 @@ import java.util.Map;
  * where needed.)
  */
 @Component
-public class LocalGameManager implements GameManager {
+public class XoxLocalGameManager implements GameManager {
 
     // organizes games by session-ID (provided by lobby-service)
     private final Map<Long, XoxGame> games = new LinkedHashMap<>();
@@ -24,7 +26,7 @@ public class LocalGameManager implements GameManager {
     }
 
     @Override
-    public XoxGame addGame(long gameId, PlayerInfo startPlayer, PlayerInfo secondPlayer) {
+    public XoxGame addGame(long gameId, Player startPlayer, Player secondPlayer) {
 
         // Refuse creation if gameid collides with existing game.
         if (games.containsKey(gameId))

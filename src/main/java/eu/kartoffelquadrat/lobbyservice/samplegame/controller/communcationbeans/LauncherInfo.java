@@ -1,4 +1,4 @@
-package eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans;
+package eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans;
 
 import java.util.LinkedList;
 
@@ -11,7 +11,7 @@ public class LauncherInfo {
     String gameServer;
 
     // List of players, in seating order and the preferred colours.
-    LinkedList<PlayerInfo> players;
+    LinkedList<Player> players;
 
     // Creator of the game. Typically the first player.
     String creator;
@@ -22,14 +22,14 @@ public class LauncherInfo {
     public LauncherInfo() {
     }
 
-    public LauncherInfo(String gameServer, LinkedList<PlayerInfo> players, String creator) {
+    public LauncherInfo(String gameServer, LinkedList<Player> players, String creator) {
         this.gameServer = gameServer;
         this.players = players;
         this.creator = creator;
         savegame = "";
     }
 
-    public LauncherInfo(String gameServer, LinkedList<PlayerInfo> players, String creator, String savegame) {
+    public LauncherInfo(String gameServer, LinkedList<Player> players, String creator, String savegame) {
         this.gameServer = gameServer;
         this.players = players;
         this.creator = creator;
@@ -44,11 +44,11 @@ public class LauncherInfo {
         this.gameServer = gameServer;
     }
 
-    public LinkedList<PlayerInfo> getPlayers() {
+    public LinkedList<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(LinkedList<PlayerInfo> players) {
+    public void setPlayers(LinkedList<Player> players) {
         this.players = players;
     }
 
@@ -73,7 +73,7 @@ public class LauncherInfo {
         StringBuilder sb = new StringBuilder("");
         sb.append("GameServer: " + gameServer + "\n");
         sb.append("Players:\n");
-        for (PlayerInfo playerinfo : players) {
+        for (Player playerinfo : players) {
             sb.append("\t> ").append(playerinfo.toString()).append("\n");
         }
         sb.append("Creator: ").append(creator);

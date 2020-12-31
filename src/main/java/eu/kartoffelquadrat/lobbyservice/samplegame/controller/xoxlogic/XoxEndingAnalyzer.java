@@ -1,11 +1,11 @@
-package eu.kartoffelquadrat.lobbyservice.xox.controller.xoxlogic;
+package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
-import eu.kartoffelquadrat.lobbyservice.xox.model.XoxGame;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
 
 /**
  * Util class to determine whether a given xox board state implies that the game is ended.
  */
-public class EndingAnalyzer {
+public class XoxEndingAnalyzer {
 
     /**
      * Verifies whether the game already fulfils any end criteria. Marks the game as finished, if at least criterion one

@@ -1,4 +1,4 @@
-package eu.kartoffelquadrat.lobbyservice.xox.controller;
+package eu.kartoffelquadrat.lobbyservice.samplegame.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

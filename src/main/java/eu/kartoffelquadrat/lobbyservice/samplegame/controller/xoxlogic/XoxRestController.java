@@ -4,27 +4,23 @@
  * @Author: Maximilian Schiedermeier
  * @Date: December 2020
  */
-package eu.kartoffelquadrat.lobbyservice.xox.controller;
+package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
-import eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans.LauncherInfo;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.GameRestController;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.GameManager;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxLocalGameManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import com.google.gson.Gson;
-import org.springframework.web.servlet.ModelAndView;
-
 /***
- * Rest controller for API endpoints of the Xox game.
+ * Rest controller for API endpoints of the Xox game. Apart from rtequest authorization, no business logic is contained
+ * in this class.
  */
 @RestController
-public class XoxRestController {
+public class XoxRestController implements GameRestController {
 
-    private final String LOG_START = "\u001B[38;5;184m";
-    private final String LOG_END = "\u001B[m";
-
-
-    // Collection to remember which games are currently active.
-    Collection<Long> games = new LinkedList<>();
+    @Autowired
+    private XoxLocalGameManager gameManager;
 
     /**
      * REST endpoint to start a new game (originating a launched session).

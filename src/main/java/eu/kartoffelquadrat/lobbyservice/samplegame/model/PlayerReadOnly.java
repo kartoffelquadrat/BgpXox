@@ -1,10 +1,10 @@
-package eu.kartoffelquadrat.lobbyservice.xox.model;
+package eu.kartoffelquadrat.lobbyservice.samplegame.model;
 
 /**
  * Read only interface for properties of a player, as provided by the LobbyService.
  */
 
-public interface PlayerInfoReadOnly {
+public interface PlayerReadOnly {
 
     /**
      * Getter for the name of a player.
@@ -26,5 +26,5 @@ public interface PlayerInfoReadOnly {
      * @param other as the player object to compare with.
      * @return a boolean that indicates whether the names of the provided player objects match.
      */
-    boolean equals(PlayerInfoReadOnly other);
+    boolean equals(Object other);
 }

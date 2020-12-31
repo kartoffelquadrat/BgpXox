@@ -1,20 +1,21 @@
-package eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans;
-import eu.kartoffelquadrat.lobbyservice.xox.model.PlayerInfoReadOnly;
+package eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans;
+
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 
 /**
  * Encodes minimal information required for launch instructions.
  */
-public class PlayerInfo implements PlayerInfoReadOnly {
+public class Player implements PlayerReadOnly {
 
     String name;
     String preferredColour;
 
-    public PlayerInfo(String name, String preferredColour) {
+    public Player(String name, String preferredColour) {
         this.name = name;
         this.preferredColour = preferredColour;
     }
 
-    public PlayerInfo() {
+    public Player() {
     }
 
     public String getName() {
@@ -29,14 +30,20 @@ public class PlayerInfo implements PlayerInfoReadOnly {
         return preferredColour;
     }
 
-    @Override
-    public boolean equals(PlayerInfoReadOnly other) {
-        return false;
-        // Todo: implement;
-    }
-
     public void setPreferredColour(String preferredColour) {
         this.preferredColour = preferredColour;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+
+        if (other == null)
+            return false;
+
+        if (other.getClass() != Player.class)
+            return false;
+
+        return (name == ((Player) other).name) && (preferredColour == ((Player) other).preferredColour);
     }
 
     @Override

@@ -59,7 +59,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <mainClass>eu.kartoffelquadrat.lobbyservice.xox.controller.Launcher</mainClass>
+                    <mainClass>eu.kartoffelquadrat.lobbyservice.samplegame.controller.Launcher</mainClass>
                 </configuration>
                 <executions>
                     <execution>

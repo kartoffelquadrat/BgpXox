@@ -1,4 +1,4 @@
-package eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans;
+package eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans;
 
 /**
  * Just a bean to encapsulate all data transferred to the LS upon registration of Xox as a new gameserver. This class

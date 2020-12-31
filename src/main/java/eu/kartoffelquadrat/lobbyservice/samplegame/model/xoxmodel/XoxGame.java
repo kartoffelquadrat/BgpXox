@@ -1,18 +1,17 @@
-package eu.kartoffelquadrat.lobbyservice.xox.model;
+package eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel;
 
-import eu.kartoffelquadrat.lobbyservice.xox.controller.communcationbeans.PlayerInfo;
-import jdk.nashorn.internal.parser.TokenStream;
-
-import java.util.Collection;
-import java.util.LinkedList;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Player;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.Game;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 
 /**
  * Represents the state of a running game.
  */
-public class XoxGame {
+public class XoxGame implements Game {
 
     // Read only access to the parameters of the two involved players.
-    private final PlayerInfoReadOnly[] players = new PlayerInfoReadOnly[2];
+    private final PlayerReadOnly[] players = new PlayerReadOnly[2];
 
     // Reference to current state of the board
     XoxBoard board;
@@ -23,7 +22,7 @@ public class XoxGame {
     // Internal index counter for the current player. Range: [0-1]
     private int currentPlayer;
 
-    public XoxGame(PlayerInfo startPlayer, PlayerInfo secondPlayer) {
+    public XoxGame(Player startPlayer, Player secondPlayer) {
         players[0] = startPlayer;
         players[1] = secondPlayer;
         currentPlayer = 0;
@@ -38,11 +37,12 @@ public class XoxGame {
         finished = true;
     }
 
+    @Override
     public XoxBoard getBoard() {
         return board;
     }
 
-    public PlayerInfoReadOnly getPlayerInfo(int index) {
+    public PlayerReadOnly getPlayerInfo(int index) {
 
         return players[index];
     }

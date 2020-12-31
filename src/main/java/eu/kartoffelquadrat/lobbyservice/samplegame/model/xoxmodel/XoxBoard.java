@@ -1,7 +1,9 @@
-package eu.kartoffelquadrat.lobbyservice.xox.model;
+package eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel;
 
 
-public class XoxBoard {
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.Board;
+
+public class XoxBoard implements Board {
 
     // States of cells are encoded by Characters:
     // ' ': empty. 'x': occupied by x, 'o': occupied by o, 'X' winning cell of x, 'O' winning cell of o.
