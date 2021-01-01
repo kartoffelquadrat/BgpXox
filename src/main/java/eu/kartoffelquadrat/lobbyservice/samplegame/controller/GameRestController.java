@@ -17,17 +17,17 @@ public interface GameRestController {
      *
      * @param gameId       as the game key.
      * @param launcherInfo as additional parameters for the game to be created
-     * @param token as the oauth2 token used to authorize this operation. Must be a user token.
+     * @param accessToken as the oauth2 token used to authorize this operation. Must be a user token.
      */
-    void launchGame(long gameId, LauncherInfo launcherInfo, String token);
+    void launchGame(long gameId, LauncherInfo launcherInfo, String accessToken);
 
     /**
      * Deletes a new game, identified by the provided unique long value, no matter if finished or still running.
      *
      * @param gameId as the game key.
-     * @param token as the oauth2 token used to authorize this operation. Must be an admin token. ToDo: Verify this!
+     * @param accessToken as the oauth2 token used to authorize this operation. Must be an admin token. ToDo: Verify this!
      */
-    void deleteGame(long gameId, String token);
+    void deleteGame(long gameId, String accessToken);
 
     /**
      * Getter for the game board. This end point should be refreshed regularly, to allow for asynchronous client
@@ -56,7 +56,7 @@ public interface GameRestController {
      *
      * @param gameId as the key to resolve the referenced game-instance
      * @param player as the player requesting a set of available actions
-     * @param token as the
+     * @param accessToken as the
      */
-    String getActions(long gameId, String player, String token);
+    String getActions(long gameId, String player, String accessToken);
 }

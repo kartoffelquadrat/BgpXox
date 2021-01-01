@@ -1,5 +1,6 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 
 /**

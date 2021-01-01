@@ -9,9 +9,10 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 import com.google.gson.Gson;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.ActionGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.GameRestController;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.TokenResolver;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.LauncherInfo;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Player;
-import eu.kartoffelquadrat.lobbyservice.samplegame.model.Game;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.GameManager;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
@@ -30,18 +31,21 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class XoxRestController implements GameRestController {
 
-    private GameManager<XoxGame> gameManager;
+    final
+    TokenResolver tokenResolver;
+
+    private final GameManager<XoxGame> gameManager;
 
     private ActionGenerator actionGenerator;
 
     private String gameServiceName;
 
     public XoxRestController(
-            @Autowired GameManager gameManager,
-            @Autowired ActionGenerator actionGenerator,
+            @Autowired ActionGenerator actionGenerator, GameManager<XoxGame> gameManager, TokenResolver tokenResolver,
             @Value("${gameservice.name}") String gameServiceName) {
         this.gameManager = gameManager;
         this.gameServiceName = gameServiceName;
+        this.tokenResolver = tokenResolver;
     }
 
     /**
@@ -54,7 +58,7 @@ public class XoxRestController implements GameRestController {
 
     @Override
     @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
-    public void launchGame(@PathVariable long gameId, LauncherInfo launcherInfo, String token) {
+    public void launchGame(@PathVariable long gameId, LauncherInfo launcherInfo, String accessToken) {
         if (launcherInfo == null || launcherInfo.getGameServer() == null)
             throw new LogicException("LauncherInfo provided by Lobby Service did not specify a matching Service name.");
         if (!launcherInfo.getGameServer().equals(gameServiceName))
@@ -68,7 +72,7 @@ public class XoxRestController implements GameRestController {
 
     @Override
     @DeleteMapping("/api/games/{gameId}")
-    public void deleteGame(@PathVariable long gameId, String token) {
+    public void deleteGame(@PathVariable long gameId, String accessToken) {
 
         // Verify the provided game id is valid
         if (!gameManager.isExistentGameId(gameId))
@@ -99,7 +103,7 @@ public class XoxRestController implements GameRestController {
     }
 
     @Override
-    public String getActions(@PathVariable long gameId, String player, String token) {
+    public String getActions(@PathVariable long gameId, String player, String accessToken) {
 
         if(!gameManager.isExistentGameId(gameId))
             throw new ModelAccessException("Can not retrieve players for game "+gameId+". Not a valid game id.");

@@ -1,4 +1,4 @@
-package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
+package eu.kartoffelquadrat.lobbyservice.samplegame.controller;
 
 /**
  * Custom RuntimeException that is fired whenever the logic is instructed to handle parameters that semantically are not

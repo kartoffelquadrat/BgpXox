@@ -2,6 +2,7 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.Action;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.ActionGenerator;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxBoard;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;

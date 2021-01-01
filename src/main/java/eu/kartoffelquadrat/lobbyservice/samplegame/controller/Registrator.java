@@ -115,4 +115,6 @@ public class Registrator {
         if (response.getStatus() != 200)
             System.out.println("LobbyService rejected unregistration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
     }
+
+    // ToDo: Add method to notify LS about an ended game.
 }
