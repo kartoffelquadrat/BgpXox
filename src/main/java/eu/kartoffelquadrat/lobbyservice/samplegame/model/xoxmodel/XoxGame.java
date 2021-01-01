@@ -41,7 +41,7 @@ public class XoxGame implements Game {
     }
 
     @Override
-    public PlayerReadOnly getPlayerByName(String name) {
+    public PlayerReadOnly getPlayerByName(String name) throws ModelAccessException {
         for (PlayerReadOnly player : players) {
             if (player.getName().equals(name))
                 return player;
@@ -53,6 +53,14 @@ public class XoxGame implements Game {
     @Override
     public XoxBoard getBoard() {
         return board;
+    }
+
+    @Override
+    public PlayerReadOnly[] getPlayers() {
+        PlayerReadOnly[] deepCopy = new PlayerReadOnly[players.length];
+        deepCopy[0] = players[0];
+        deepCopy[1] = players[1];
+        return deepCopy;
     }
 
     public PlayerReadOnly getPlayerInfo(int index) {
@@ -68,7 +76,7 @@ public class XoxGame implements Game {
         return players[currentPlayer].getName();
     }
 
-    public void setCurrentPlayer(int nextCurrentPlayer) {
+    public void setCurrentPlayer(int nextCurrentPlayer) throws ModelAccessException {
         if (nextCurrentPlayer != 0 && nextCurrentPlayer != 1)
             throw new ModelAccessException("Current player can not be set to a value other than 0 or 1.");
         currentPlayer = nextCurrentPlayer;

@@ -1,9 +1,3 @@
-/**
- * REST API handlers of Xox.
- *
- * @Author: Maximilian Schiedermeier
- * @Date: December 2020
- */
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
 import com.google.gson.Gson;
@@ -19,6 +13,8 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /***
@@ -31,18 +27,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class XoxRestController implements GameRestController {
 
-    final
-    TokenResolver tokenResolver;
-
+    // Injected util beans and own service name.
+    private final TokenResolver tokenResolver;
     private final GameManager<XoxGame> gameManager;
-
-    private ActionGenerator actionGenerator;
-
-    private String gameServiceName;
+    private final ActionGenerator actionGenerator;
+    private final String gameServiceName;
 
     public XoxRestController(
             @Autowired ActionGenerator actionGenerator, GameManager<XoxGame> gameManager, TokenResolver tokenResolver,
             @Value("${gameservice.name}") String gameServiceName) {
+        this.actionGenerator = actionGenerator;
         this.gameManager = gameManager;
         this.gameServiceName = gameServiceName;
         this.tokenResolver = tokenResolver;
@@ -58,66 +52,112 @@ public class XoxRestController implements GameRestController {
 
     @Override
     @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
-    public void launchGame(@PathVariable long gameId, LauncherInfo launcherInfo, String accessToken) {
-        if (launcherInfo == null || launcherInfo.getGameServer() == null)
-            throw new LogicException("LauncherInfo provided by Lobby Service did not specify a matching Service name.");
-        if (!launcherInfo.getGameServer().equals(gameServiceName))
-            throw new LogicException("LauncherInfo provided by Lobby Service did not specify a matching Service name.");
-        if (gameManager.isExistentGameId(gameId))
-            throw new LogicException("Game can not be launched. Id is already in use.");
-        else {
+    public ResponseEntity launchGame(@PathVariable long gameId, LauncherInfo launcherInfo, String accessToken) {
+
+        try {
+            if (launcherInfo == null || launcherInfo.getGameServer() == null)
+                throw new LogicException("LauncherInfo provided by Lobby Service did not specify a matching Service name.");
+            if (!launcherInfo.getGameServer().equals(gameServiceName))
+                throw new LogicException("LauncherInfo provided by Lobby Service did not specify a matching Service name.");
+            if (gameManager.isExistentGameId(gameId))
+                throw new LogicException("Game can not be launched. Id is already in use.");
+
+            // Looks good, lets create the game on model side, return an Http-OK.
             gameManager.addGame(gameId, launcherInfo.getPlayers().toArray(new Player[launcherInfo.getPlayers().size()]));
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (LogicException e) {
+
+            // Something went wrong. Send a http-400 and pass the exception message as body payload.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @Override
     @DeleteMapping("/api/games/{gameId}")
-    public void deleteGame(@PathVariable long gameId, String accessToken) {
+    public ResponseEntity deleteGame(@PathVariable long gameId, String accessToken) {
 
-        // Verify the provided game id is valid
-        if (!gameManager.isExistentGameId(gameId))
-            throw new ModelAccessException("Game can not be removed. No game associated to provided gameId");
+        try {
+            // Verify the provided game id is valid
+            if (!gameManager.isExistentGameId(gameId))
+                throw new ModelAccessException("Game can not be removed. No game associated to provided gameId");
 
-        // ToDo: Verify how this canges if a creator token is used. Inspect LS sources if termination of running games is allowed for creators.
-        gameManager.removeGame(gameId, true);
+            // ToDo: Verify how this changes if a creator token is used. Inspect LS sources if termination of running games is allowed for creators.
+
+            // Looks good, remove the game on model side, return an Http-OK.
+            gameManager.removeGame(gameId, true);
+            return ResponseEntity.status(HttpStatus.OK).build();
+
+        } catch (ModelAccessException e) {
+
+            // Something went wrong. Send a http-400 and pass the exception message as body payload.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @Override
-    public String getBoard(@PathVariable long gameId, @RequestParam(required = false) String hash) {
+    public ResponseEntity getBoard(@PathVariable long gameId, @RequestParam(required = false) String hash) {
 
-        // ToDo: implement long polling
+        // ToDo: Enable long polling for this resource. ToDo: close BCM (dedicated ARL method) on game finish.
+        try {
+            // Verify the requested game exists.
+            if (!gameManager.isExistentGameId(gameId))
+                throw new ModelAccessException("Can not retrieve board for game " + gameId + ". Not a valid game id.");
 
-        if(!gameManager.isExistentGameId(gameId))
-            throw new ModelAccessException("Can not retrieve board for game "+gameId+". Not a valid game id.");
+            // Looks good, Serialize the board and place it as body in a ResponseEntity (Http-OK).
+            String serializedBoard = new Gson().toJson(gameManager.getGameById(gameId));
+            return ResponseEntity.status(HttpStatus.OK).body(serializedBoard);
 
-        return new Gson().toJson(gameManager.getGameById(gameId));
+        } catch (ModelAccessException e) {
+
+            // Something went wrong. Send a http-400 and pass the exception message as body payload.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @Override
-    public String getPlayers(@PathVariable long gameId) {
+    public ResponseEntity getPlayers(@PathVariable long gameId) {
 
-        if(!gameManager.isExistentGameId(gameId))
-            throw new ModelAccessException("Can not retrieve players for game "+gameId+". Not a valid game id.");
+        try {
+            // Verify the requested game exists.
+            if (!gameManager.isExistentGameId(gameId))
+                throw new ModelAccessException("Can not retrieve players for game " + gameId + ". Not a valid game id.");
 
-        return new Gson().toJson(gameManager.getGameById(gameId).getBoard());
+            // Looks good, Serialize the board and place it as body in a ResponseEntity (Http-OK).
+            String serializedPlayers = new Gson().toJson(gameManager.getGameById(gameId).getPlayers());
+            return ResponseEntity.status(HttpStatus.OK).body(serializedPlayers);
+        } catch (ModelAccessException e) {
+
+            // Something went wrong. Send a http-400 and pass the exception message as body payload.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @Override
-    public String getActions(@PathVariable long gameId, String player, String accessToken) {
+    public ResponseEntity getActions(@PathVariable long gameId, String playerName, String accessToken) {
 
-        if(!gameManager.isExistentGameId(gameId))
-            throw new ModelAccessException("Can not retrieve players for game "+gameId+". Not a valid game id.");
+        try {
 
-        // ToDo: verify token belongs to player
+            if (!gameManager.isExistentGameId(gameId))
+                throw new ModelAccessException("Can not retrieve players for game " + gameId + ". Not a valid game id.");
 
-        // ToDo: verify player is participant
+            // ToDo: verify token belongs to player
 
-        // ToDo: verify if its the players turn
+            // ToDo: verify player is participant
 
-        // ToDo: resolve player to player object... or convert down call stack below...
+            // ToDo: verify if its the players turn
 
-        XoxGame xoxGame = gameManager.getGameById(gameId);
-        PlayerReadOnly playerObject = xoxGame.getPlayerByName(player);
-        return new Gson().toJson(actionGenerator.generateActions(xoxGame, playerObject));
+            // ToDo: resolve player to player object... or convert down call stack below...
+
+            // Looks good, build the actions array, serialize it and send it back in a 200 (OK) Http response.
+            XoxGame xoxGame = gameManager.getGameById(gameId);
+            PlayerReadOnly playerObject = xoxGame.getPlayerByName(playerName);
+            String serializedActions = new Gson().toJson(actionGenerator.generateActions(xoxGame, playerObject));
+            return ResponseEntity.status(HttpStatus.OK).body(serializedActions);
+
+        } catch (ModelAccessException e) {
+
+            // Something went wrong. Send a http-400 and pass the exception message as body payload.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }
