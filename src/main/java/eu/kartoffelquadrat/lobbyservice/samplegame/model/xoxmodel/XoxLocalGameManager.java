@@ -24,7 +24,10 @@ public class XoxLocalGameManager implements GameManager {
     private final Map<Long, XoxGame> games = new LinkedHashMap<>();
 
     @Override
-    public XoxGame getGameById(long gameId) {
+    public XoxGame getGameById(long gameId) throws ModelAccessException{
+
+        if (!isExistentGameId(gameId))
+            throw new ModelAccessException("GameId can not be resolved to a registered game.");
         return games.get(gameId);
     }
 
@@ -34,7 +37,7 @@ public class XoxLocalGameManager implements GameManager {
     }
 
     @Override
-    public XoxGame addGame(long gameId, Player[] players) {
+    public XoxGame addGame(long gameId, Player[] players) throws ModelAccessException {
 
         // Refuse creation if gameid collides with existing game.
         if (games.containsKey(gameId))
@@ -48,7 +51,7 @@ public class XoxLocalGameManager implements GameManager {
     }
 
     @Override
-    public void removeGame(long gameId, boolean evenIfUnfinished) {
+    public void removeGame(long gameId, boolean evenIfUnfinished) throws ModelAccessException  {
 
         // Throw exception of the gameid is not valid
         if (!games.containsKey(gameId))

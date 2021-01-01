@@ -1,6 +1,7 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel;
 
 
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Board;
 
 /**
@@ -10,13 +11,13 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.Board;
  * @Author: Maximilian Schiedermeier
  * @Date: December 2020
  */
-public class XoxBoard implements Board {
+public class XoxBoard implements Board, BroadcastContent {
 
     // States of cells are encoded by Characters:
     // ' ': empty. 'x': occupied by x, 'o': occupied by o, 'X' winning cell of x, 'O' winning cell of o.
     private final char[][] cells;
 
-    protected XoxBoard() {
+    public XoxBoard() {
         cells = new char[3][3];
         initCells();
     }
@@ -79,5 +80,10 @@ public class XoxBoard implements Board {
                 cells[x][y] = ' ';
             }
         }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }

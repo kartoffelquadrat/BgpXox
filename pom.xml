@@ -41,12 +41,18 @@
             <version>1.4.9</version>
         </dependency>
 
-        <!--    added for the web view resolving-->
+        <!-- added for the web view resolving-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <!-- long polling support-->
+        <dependency>
+            <groupId>eu.kartoffelquadrat</groupId>
+            <artifactId>asyncrestlib</artifactId>
+            <version>1.5.1</version>
+        </dependency>
     </dependencies>
 
     <build>

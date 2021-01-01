@@ -21,7 +21,7 @@ public interface GameManager<T extends Game> {
      * @param gameId as the game to look up.
      * @return the referenced game, if found.
      */
-    T getGameById(long gameId);
+    T getGameById(long gameId) throws ModelAccessException;
 
     /**
      * Tells whether a provided game id is known.
@@ -38,7 +38,7 @@ public interface GameManager<T extends Game> {
      * @param players as game participants in the order of joining
      * @return
      */
-    T addGame(long gameId, Player[] players);
+    T addGame(long gameId, Player[] players) throws ModelAccessException;
 
     /**
      * Removes an indexed game. The action is rejected adn a IllegalModelAccessException is thrown, if the game is not
@@ -48,5 +48,5 @@ public interface GameManager<T extends Game> {
      * @param evenIfUnfinished as a safety flag to prevent unitended deletion of running games
      * @throws ModelAccessException in case the game is still runnung by the previous parameter is set to false
      */
-    void removeGame(long gameId, boolean evenIfUnfinished);
+    void removeGame(long gameId, boolean evenIfUnfinished) throws ModelAccessException;
 }
