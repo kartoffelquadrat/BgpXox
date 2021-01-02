@@ -25,7 +25,7 @@ public class XoxActionGenerator implements ActionGenerator {
      * @param player as the player object defining the participant for why tha action bundle shall be created.
      * @return
      */
-    public Action[] generateActions(XoxGame game, PlayerReadOnly player) {
+    public Action[] generateActions(XoxGame game, PlayerReadOnly player) throws LogicException {
 
         // Verify that the provided player is a game participant
         if (!isParticipant(game, player))
@@ -58,7 +58,7 @@ public class XoxActionGenerator implements ActionGenerator {
      * @param board as the 3x3 grid to be analyzed.
      * @return an array of possible lay actions.
      */
-    private static Action[] emptyCellsToActions(XoxBoard board, PlayerReadOnly player) {
+    private static Action[] emptyCellsToActions(XoxBoard board, PlayerReadOnly player) throws LogicException {
         Collection<XoxClaimFieldAction> actions = new LinkedList<>();
 
         // Iterate over board

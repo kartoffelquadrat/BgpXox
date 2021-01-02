@@ -23,7 +23,7 @@ public class XoxClaimFieldAction {
      * @param x as the column-index to be populated by this action
      * @param y as the row-index to be populated by this action
      */
-    public XoxClaimFieldAction(int x, int y, PlayerReadOnly player) {
+    public XoxClaimFieldAction(int x, int y, PlayerReadOnly player) throws LogicException {
         if (x < 0 || x > 2)
             throw new LogicException("Xox action can not be created. X position is out of bounds.");
         if (y < 0 || y > 2)

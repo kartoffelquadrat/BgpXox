@@ -33,6 +33,13 @@ Xox requires a dedicated admin account initiated at the LS. This account is not 
 
 This repository ~~integrates as an optional git submodule into the LobbyService sources~~ and ~~comes with a preconfigured docker-compose file for simulatenous startup~~.
 
+### IntelliJ Run configurations:
+
+ * JUNIT / Coverage:    
+ * Mvn Test: clean test
+ * Mvn Run: clean spring-boot:run
+  * Spring Boot Run:
+
 ### Native Deploment
 
 This first option 

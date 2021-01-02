@@ -13,5 +13,5 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
  */
 public interface ActionGenerator {
 
-    Action[] generateActions(XoxGame game, PlayerReadOnly player);
+    Action[] generateActions(XoxGame game, PlayerReadOnly player) throws LogicException;
 }
