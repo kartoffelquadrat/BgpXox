@@ -1,5 +1,6 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.Action;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 
@@ -10,7 +11,7 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
  * @Author: Maximilian Schiedermeier
  * @Date: December 2020
  */
-public class XoxClaimFieldAction {
+public class XoxClaimFieldAction implements Action {
 
     private final int x;
     private final int y;

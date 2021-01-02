@@ -29,6 +29,7 @@ public class XoxGame implements Game {
         players[0] = startPlayer;
         players[1] = secondPlayer;
         currentPlayer = 0;
+        board = new XoxBoard();
         //Todo: Implement.
     }
 
