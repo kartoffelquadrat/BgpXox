@@ -25,7 +25,8 @@ public class XoxActionGenerator implements ActionGenerator {
      * @param player as the player object defining the participant for why tha action bundle shall be created.
      * @return
      */
-    public Action[] generateActions(XoxGame game, PlayerReadOnly player) throws LogicException {
+    @Override
+    public XoxClaimFieldAction[] generateActions(XoxGame game, PlayerReadOnly player) throws LogicException {
 
         // Verify that the provided player is a game participant
         if (!isParticipant(game, player))
@@ -33,7 +34,7 @@ public class XoxActionGenerator implements ActionGenerator {
 
         // If not the player's turn, return an empty set. (Check is performed by comparing the name of the current player)
         if (player.equals(game.getCurrentPlayerName()))
-            return new Action[0];
+            return new XoxClaimFieldAction[0];
 
         // Iterate over board and add an action for every unoccupied cell.
         return emptyCellsToActions(game.getBoard(), player);
@@ -58,7 +59,7 @@ public class XoxActionGenerator implements ActionGenerator {
      * @param board as the 3x3 grid to be analyzed.
      * @return an array of possible lay actions.
      */
-    private static Action[] emptyCellsToActions(XoxBoard board, PlayerReadOnly player) throws LogicException {
+    private static XoxClaimFieldAction[] emptyCellsToActions(XoxBoard board, PlayerReadOnly player) throws LogicException {
         Collection<XoxClaimFieldAction> actions = new LinkedList<>();
 
         // Iterate over board
@@ -70,7 +71,7 @@ public class XoxActionGenerator implements ActionGenerator {
             }
         }
 
-        return actions.toArray(new Action[actions.size()]);
+        return actions.toArray(new XoxClaimFieldAction[actions.size()]);
     }
 }
 
