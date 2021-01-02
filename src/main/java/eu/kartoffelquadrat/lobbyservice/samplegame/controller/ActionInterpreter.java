@@ -1,6 +1,7 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller;
 
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Game;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
 
 /**
  * Generic interface for Blackboard-style action interpreters that apply provided player actions on a game instance.
@@ -17,5 +18,5 @@ public interface ActionInterpreter {
      * @param action as the action to be interpreted and applied to the game.
      * @param game as the game instance the action shall be applied on.
      */
-    void interpretAndApplyAction(Action action, Game game);
+    void interpretAndApplyAction(Action action, Game game) throws LogicException, ModelAccessException;
 }

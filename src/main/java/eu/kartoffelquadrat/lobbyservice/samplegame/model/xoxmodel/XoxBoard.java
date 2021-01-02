@@ -3,6 +3,8 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel;
 
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Board;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 
 /**
  * Xox specific implementation of the board interface. Encodes 3x3 matrix with individually maintained state model per
@@ -80,6 +82,12 @@ public class XoxBoard implements Board, BroadcastContent {
                 cells[x][y] = ' ';
             }
         }
+    }
+
+    public void occupy(int xPos, int yPos, boolean firstPlayer) throws ModelAccessException {
+        if(!isFree(xPos, yPos))
+            throw new ModelAccessException("Requested cell can not by occupied. Is not free.");
+        cells[yPos][xPos] = (firstPlayer?'x':'o');
     }
 
     @Override

@@ -46,4 +46,21 @@ public class XoxClaimFieldAction implements Action {
     public PlayerReadOnly getPlayer() {
         return player;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if(other == null || other.getClass() != XoxClaimFieldAction.class)
+            return false;
+
+        // Compare position and name fields
+        XoxClaimFieldAction otherAction = (XoxClaimFieldAction) other;
+        if(getX() != otherAction.getX())
+            return false;
+
+        if(getY() != otherAction.getY())
+            return false;
+
+        return player.equals(otherAction.getPlayer());
+    }
 }

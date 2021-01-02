@@ -3,6 +3,7 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.Action;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.ActionGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.Game;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxBoard;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
@@ -26,18 +27,23 @@ public class XoxActionGenerator implements ActionGenerator {
      * @return
      */
     @Override
-    public XoxClaimFieldAction[] generateActions(XoxGame game, PlayerReadOnly player) throws LogicException {
+    public XoxClaimFieldAction[] generateActions(Game game, PlayerReadOnly player) throws LogicException {
+
+        // Verify and cast the game type
+        if(game.getClass() != XoxGame.class)
+            throw new LogicException("Xox Action Generator can only handle Xox games.");
+        XoxGame xoxGame = (XoxGame) game;
 
         // Verify that the provided player is a game participant
-        if (!isParticipant(game, player))
+        if (!isParticipant(xoxGame, player))
             throw new LogicException("Actions can no be generated for player " + player.getName() + ". Is not a participant of the game.");
 
         // If not the player's turn, return an empty set. (Check is performed by comparing the name of the current player)
-        if (player.equals(game.getCurrentPlayerName()))
+        if (player.equals(xoxGame.getCurrentPlayerName()))
             return new XoxClaimFieldAction[0];
 
         // Iterate over board and add an action for every unoccupied cell.
-        return emptyCellsToActions(game.getBoard(), player);
+        return emptyCellsToActions(xoxGame.getBoard(), player);
     }
 
     /**

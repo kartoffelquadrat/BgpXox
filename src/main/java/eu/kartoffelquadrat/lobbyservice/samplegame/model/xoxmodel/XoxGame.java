@@ -30,7 +30,6 @@ public class XoxGame implements Game {
         players[1] = secondPlayer;
         currentPlayer = 0;
         board = new XoxBoard();
-        //Todo: Implement.
     }
 
     public boolean isFinished() {
@@ -81,5 +80,16 @@ public class XoxGame implements Game {
         if (nextCurrentPlayer != 0 && nextCurrentPlayer != 1)
             throw new ModelAccessException("Current player can not be set to a value other than 0 or 1.");
         currentPlayer = nextCurrentPlayer;
+    }
+
+    /**
+     * Helper method that resolves a player object. Returns true if the provided player object is the first player
+     * (creator) of the game.
+     *
+     * @param player as the object to test.
+     * @return true if the provided player matches the creator of this game. False otherwise.
+     */
+    public boolean isFirstPlayer(PlayerReadOnly player) {
+        return getPlayers()[0].equals(player);
     }
 }
