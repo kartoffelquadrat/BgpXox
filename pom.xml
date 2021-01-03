@@ -63,6 +63,14 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <!-- useful collection operations-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.11</version>
+        </dependency>
+
+
         <!-- long polling support-->
         <dependency>
             <groupId>eu.kartoffelquadrat</groupId>

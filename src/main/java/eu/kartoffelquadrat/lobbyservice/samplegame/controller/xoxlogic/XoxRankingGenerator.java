@@ -6,6 +6,7 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.Game;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Ranking;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
+import org.apache.commons.lang.ArrayUtils;
 
 public class XoxRankingGenerator implements RankingGenerator {
 
@@ -23,20 +24,29 @@ public class XoxRankingGenerator implements RankingGenerator {
             return new Ranking(game.getPlayers(), new int[]{0,0});
 
         // Verify there actually is a player, if not:
-            // return new Ranking(game.getPlayers(), new int[]{0,0});
+        if(isDraw(xoxGame))
+            return new Ranking(game.getPlayers(), new int[]{0,0});
 
         // Winner (player with 3 in a row) gets 1 point, looser 0.
+        char winnerChar = xoxGame.getBoard().getThreeInALineCharIfExists();
+        PlayerReadOnly[] rankedPlayers = game.getPlayers();
 
+        // If the non-creator won, return a ranking that is the inverse of the games player listing.
+        if(winnerChar != 'x')
+            ArrayUtils.reverse(rankedPlayers);
+        return new Ranking(rankedPlayers, new int[]{1, 0});
     }
 
     /**
-     * Analyz
+     * Analyze if the provided game resulted in a draw (no winner)
      * @return
      */
     private boolean isDraw(XoxGame game)
     {
-        // Todo Implement;
-        return false;
+        if(!game.isFinished())
+            return false;
+
+        return !game.getBoard().isThreeInALine();
     }
 
     private PlayerReadOnly getWinner(XoxGame game)

@@ -47,25 +47,35 @@ public class XoxBoard implements Board, BroadcastContent {
      */
     public boolean isThreeInALine() {
 
+        return (getThreeInALineCharIfExists() != ' ');
+    }
+
+    /**
+     * If there a three in a line, this method returns the character of those cells. If there are not, it returns the
+     * space character.
+     *
+     * @return a character indicating the occupier of the line or a whitespace.
+     */
+    public char getThreeInALineCharIfExists() {
         // check for three in a row
         for (int y = 0; y < cells[0].length; y++) {
             if (cells[0][y] == cells[1][y] && cells[1][y] == cells[2][y])
-                return true;
+                return cells[1][y];
         }
 
         // check for three in a column
         for (int x = 0; x < cells.length; x++) {
             if (cells[x][0] == cells[x][1] && cells[x][1] == cells[x][2])
-                return true;
+                return cells[x][1];
         }
 
         // check diagonals
         if (cells[0][0] == cells[1][1] && cells[1][1] == cells[2][2])
-            return true;
+            return cells[1][1];
         if (cells[0][2] == cells[1][1] && cells[1][1] == cells[2][0])
-            return true;
+            return cells[1][1];
 
-        return false;
+        return ' ';
     }
 
     public boolean isFree(int xPos, int yPos) {
@@ -85,9 +95,9 @@ public class XoxBoard implements Board, BroadcastContent {
     }
 
     public void occupy(int xPos, int yPos, boolean firstPlayer) throws ModelAccessException {
-        if(!isFree(xPos, yPos))
+        if (!isFree(xPos, yPos))
             throw new ModelAccessException("Requested cell can not by occupied. Is not free.");
-        cells[yPos][xPos] = (firstPlayer?'x':'o');
+        cells[yPos][xPos] = (firstPlayer ? 'x' : 'o');
     }
 
     @Override

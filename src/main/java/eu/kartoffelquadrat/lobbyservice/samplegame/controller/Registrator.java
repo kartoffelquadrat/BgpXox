@@ -24,7 +24,6 @@ public class Registrator {
 
     private String lobbyServiceLocation;
 
-
     private String gameServiceLocation;
 
     private String gameServicePort;
@@ -36,6 +35,9 @@ public class Registrator {
     private String serviceOauthPassword;
 
     private GameServerParameters registrationParameters;
+
+    @Value("${debug.skip.registration}")
+    private boolean skipLobbyServiceCallbacks;
 
     @Autowired
     Registrator(@Value("${gameservice.name}")
@@ -49,7 +51,7 @@ public class Registrator {
         this.lobbyServiceLocation = lobbyServiceLocation;
         this.gameServiceLocation = gameServiceLocation;
         this.gameServicePort = gameServicePort;
-        registrationParameters = new GameServerParameters(gameServiceName, gameServiceLocation + ":"+ gameServicePort + "/"+ gameServiceName, 2, 2, "true");
+        registrationParameters = new GameServerParameters(gameServiceName, gameServiceLocation + ":" + gameServicePort + "/" + gameServiceName, 2, 2, "true");
         System.out.println("LS-location: " + lobbyServiceLocation);
     }
 
@@ -61,6 +63,11 @@ public class Registrator {
      * @throws UnirestException in case of a communication error with the LS
      */
     private String getToken() throws UnirestException {
+
+        if (skipLobbyServiceCallbacks) {
+            System.out.println("***WARNING*** Token retrieval skipped.");
+            return "DUMMY";
+        }
 
         String bodyString = "grant_type=password&username=" + serviceOauthName + "&password=" + serviceOauthPassword;
         HttpResponse<String> response = Unirest
@@ -89,6 +96,11 @@ public class Registrator {
      */
     public void registerAtLobbyService() throws UnirestException {
 
+        if (skipLobbyServiceCallbacks) {
+            System.out.println("***WARNING*** Registration skipped.");
+            return;
+        }
+
         // Get a valid access token, to authenticate for the registration.
         String accessToken = getToken();
 
@@ -111,6 +123,11 @@ public class Registrator {
      * credentials are required to authorize this operation.
      */
     public void unregisterAtLobbyService() throws UnirestException {
+
+        if (skipLobbyServiceCallbacks) {
+            System.out.println("***WARNING*** Unregistration skipped.");
+            return;
+        }
 
         // Get a valid access token, to authenticate for the un-registration.
         String accessToken = getToken();

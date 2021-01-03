@@ -2,13 +2,11 @@ package eu.kartoffelquadrat.lobbyservice.samplegame;
 
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.EndingAnalyzer;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.XoxActionGenerator;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.XoxActionInterpreter;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.XoxClaimFieldAction;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.XoxEndingAnalyzer;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.*;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.GameManager;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.Ranking;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxLocalGameManager;
 import org.junit.Test;
@@ -108,8 +106,12 @@ public class DrawTest extends XoxTestUtils {
         assert(game.isFinished());
 
         // Verify there is no winner
-        // ToDo: Implement a mechanism to determine and communicate the winner.
+        XoxRankingGenerator rankingGenerator = new XoxRankingGenerator();
+        Ranking ranking = rankingGenerator.computeRanking(game);
 
+        // In case of a draw, both players should hold 0 points.
+        assert(ranking.getScoresDescending()[0] == 0);
+        assert(ranking.getScoresDescending()[1] == 0);
     }
 
     /**
