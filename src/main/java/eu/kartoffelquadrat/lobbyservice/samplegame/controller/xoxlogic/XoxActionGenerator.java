@@ -1,5 +1,6 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
+import com.google.gson.Gson;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.Action;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.ActionGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
@@ -7,10 +8,11 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.Game;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxBoard;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Analyzes a Xox game and generates a collection of valid actions for a player.
@@ -20,35 +22,6 @@ import java.util.LinkedList;
  */
 @Component
 public class XoxActionGenerator implements ActionGenerator {
-
-    /**
-     * @param game   as the game instance for which the
-     * @param player as the player object defining the participant for why tha action bundle shall be created.
-     * @return
-     */
-    @Override
-    public XoxClaimFieldAction[] generateActions(Game game, PlayerReadOnly player) throws LogicException {
-
-        // Verify and cast the game type
-        if(game.getClass() != XoxGame.class)
-            throw new LogicException("Xox Action Generator can only handle Xox games.");
-        XoxGame xoxGame = (XoxGame) game;
-
-        // Verify that the provided player is a game participant
-        if (!isParticipant(xoxGame, player))
-            throw new LogicException("Actions can no be generated for player " + player.getName() + ". Is not a participant of the game.");
-
-        // If the game is already over, return an empty set
-        if(xoxGame.isFinished())
-            return new XoxClaimFieldAction[0];
-
-        // If not the player's turn, return an empty set. (Check is performed by comparing the name of the current player)
-        if (player.equals(xoxGame.getCurrentPlayerName()))
-            return new XoxClaimFieldAction[0];
-
-        // Iterate over board and add an action for every unoccupied cell.
-        return emptyCellsToActions(xoxGame.getBoard(), player);
-    }
 
     /**
      * Verifies if a provided player is a valid participant (player) of a Xox game. The verification runs a case
@@ -69,19 +42,50 @@ public class XoxActionGenerator implements ActionGenerator {
      * @param board as the 3x3 grid to be analyzed.
      * @return an array of possible lay actions.
      */
-    private static XoxClaimFieldAction[] emptyCellsToActions(XoxBoard board, PlayerReadOnly player) throws LogicException {
-        Collection<XoxClaimFieldAction> actions = new LinkedList<>();
+    private static Map<String, Action> emptyCellsToActions(XoxBoard board, PlayerReadOnly player) throws LogicException {
+        Map<String, Action> actionMap = new LinkedHashMap();
 
         // Iterate over board
         for (int yPos = 0; yPos < 3; yPos++) {
             for (int xPos = 0; xPos < 3; xPos++) {
                 // Add an action if the position is free
-                if (board.isFree(xPos, yPos))
-                    actions.add(new XoxClaimFieldAction(xPos, yPos, player));
+                if (board.isFree(xPos, yPos)) {
+                    Action action = new XoxClaimFieldAction(xPos, yPos, player);
+                    String actionMd5 = DigestUtils.md5Hex(new Gson().toJson(action)).toUpperCase();
+                    actionMap.put(actionMd5, action);
+                }
             }
         }
+        return actionMap;
+    }
 
-        return actions.toArray(new XoxClaimFieldAction[actions.size()]);
+    /**
+     * @param game   as the game instance for which the
+     * @param player as the player object defining the participant for why tha action bundle shall be created.
+     * @return
+     */
+    @Override
+    public Map<String, Action> generateActions(Game game, PlayerReadOnly player) throws LogicException {
+
+        // Verify and cast the game type
+        if (game.getClass() != XoxGame.class)
+            throw new LogicException("Xox Action Generator can only handle Xox games.");
+        XoxGame xoxGame = (XoxGame) game;
+
+        // Verify that the provided player is a game participant
+        if (!isParticipant(xoxGame, player))
+            throw new LogicException("Actions can no be generated for player " + player.getName() + ". Is not a participant of the game.");
+
+        // If the game is already over, return an empty set
+        if (xoxGame.isFinished())
+            return new LinkedHashMap<>();
+
+        // If not the player's turn, return an empty set. (Check is performed by comparing the name of the current player)
+        if (player.equals(xoxGame.getCurrentPlayerName()))
+            return new LinkedHashMap<>();
+
+        // Iterate over board and add an action for every unoccupied cell.
+        return emptyCellsToActions(xoxGame.getBoard(), player);
     }
 }
 

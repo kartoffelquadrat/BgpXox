@@ -12,6 +12,8 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
 /**
  * Business Logic class that applies a Xox Action on a provided Xox model instance. A Xox action encodes a players
  * request to lay on a given position. The ActionInterpreter verifies that the action is legal for the provided user. If
@@ -55,7 +57,7 @@ public class XoxActionInterpreter implements ActionInterpreter {
     private boolean isValidAction(Game game, XoxClaimFieldAction selectedAction) throws LogicException {
 
         // retrieve all valid actions for player
-        Action[] validActions = actionGenerator.generateActions(game, selectedAction.getPlayer());
+        Collection<Action> validActions = actionGenerator.generateActions(game, selectedAction.getPlayer()).values();
 
         // look up if provided action is contained
         for (Action currentAction : validActions) {

@@ -1,5 +1,6 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame;
 
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.Action;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.EndingAnalyzer;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.*;
@@ -10,6 +11,8 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.Ranking;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxLocalGameManager;
 import org.junit.Test;
+
+import java.util.Map;
 
 /**
  * @author Maximilian Schiedermeier
@@ -35,8 +38,8 @@ public class WinnerTest extends XoxTestUtils {
 
         // 1)
         // X retrieves actions, decides for action on top left.
-        XoxClaimFieldAction[] xActions = actionGenerator.generateActions(game, x);
-        assert (xActions.length == 9);
+        Map<String, Action> xActions = actionGenerator.generateActions(game, x);
+        assert (xActions.size() == 9);
         XoxClaimFieldAction action1 = findActionForPosition(xActions, 0, 0);
 
         // Apply first action
@@ -45,26 +48,26 @@ public class WinnerTest extends XoxTestUtils {
 
         // 2)
         // Y retrieves actions, decides for action bottom right, apply second action
-        XoxClaimFieldAction[] yActions = actionGenerator.generateActions(game, o);
-        assert (yActions.length == 8);
+        Map<String, Action> yActions = actionGenerator.generateActions(game, o);
+        assert (yActions.size() == 8);
         XoxClaimFieldAction action2 = findActionForPosition(yActions, 0, 1);
         actionInterpreter.interpretAndApplyAction(action2, game);
 
         // 3)
         xActions = actionGenerator.generateActions(game, x);
-        assert (xActions.length == 7);
+        assert (xActions.size() == 7);
         XoxClaimFieldAction action3 = findActionForPosition(xActions, 1, 0);
         actionInterpreter.interpretAndApplyAction(action3, game);
 
         // 4)
         yActions = actionGenerator.generateActions(game, o);
-        assert (yActions.length == 6);
+        assert (yActions.size() == 6);
         XoxClaimFieldAction action4 = findActionForPosition(yActions, 1, 1);
         actionInterpreter.interpretAndApplyAction(action4, game);
 
         // 5)
         xActions = actionGenerator.generateActions(game, x);
-        assert (xActions.length == 5);
+        assert (xActions.size() == 5);
         XoxClaimFieldAction action5 = findActionForPosition(xActions, 2, 0);
         actionInterpreter.interpretAndApplyAction(action5, game);
 
@@ -87,6 +90,6 @@ public class WinnerTest extends XoxTestUtils {
         // Verify no more moves are possible
         // 5)
         yActions = actionGenerator.generateActions(game, o);
-        assert (yActions.length == 0);
+        assert (yActions.size() == 0);
     }
 }
