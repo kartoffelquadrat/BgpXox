@@ -1,5 +1,6 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame;
 
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.EndingAnalyzer;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.XoxActionGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.XoxActionInterpreter;
@@ -36,7 +37,7 @@ public class DrawTest extends XoxTestUtils {
         //  X X O   6 5 7
         //  O X O   4 3 2
         XoxActionGenerator actionGenerator = new XoxActionGenerator();
-
+        EndingAnalyzer xoxEndingAnalyzer = new XoxEndingAnalyzer();
 
         // 1)
         // X retrieves actions, decides for action on top left.
@@ -93,7 +94,7 @@ public class DrawTest extends XoxTestUtils {
 
         // At this point the game should not be flagged finished by an end analyzer
         assert(!game.isFinished());
-        XoxEndingAnalyzer.analyzeAndUpdate(game);
+        xoxEndingAnalyzer.analyzeAndUpdate(game);
         assert(!game.isFinished());
 
         // 9)
@@ -103,7 +104,7 @@ public class DrawTest extends XoxTestUtils {
         actionInterpreter.interpretAndApplyAction(action9, game);
 
         // At this point the game should be a draw.
-        XoxEndingAnalyzer.analyzeAndUpdate(game);
+        xoxEndingAnalyzer.analyzeAndUpdate(game);
         assert(game.isFinished());
 
         // Verify there is no winner
