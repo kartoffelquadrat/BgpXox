@@ -209,7 +209,7 @@ public class XoxRestController implements GameRestController {
             // Verify the selected action was actually offered
             XoxGame xoxGame = gameManager.getGameById(gameId);
             PlayerReadOnly playerObject = xoxGame.getPlayerByName(player);
-            Map<String, Action> actions = actionGenerator.generateActions(xoxGame, playerObject));
+            Map<String, Action> actions = actionGenerator.generateActions(xoxGame, playerObject);
             if(!actions.containsKey(actionMD5))
                 throw new LogicException("Received MD5 does not match any previously offered action.");
 
@@ -219,6 +219,7 @@ public class XoxRestController implements GameRestController {
 
             // Touch the board, to update all subscribed clients
             broadcastContentManagers.get(gameId).touch();
+            return ResponseEntity.status(HttpStatus.OK).build();
 
         } catch (ModelAccessException | LogicException e) {
 
@@ -227,7 +228,6 @@ public class XoxRestController implements GameRestController {
         }
 
     }
-
 
     /**
      * Helper method that iterates over player registered for a game and compares to a provided player name.
