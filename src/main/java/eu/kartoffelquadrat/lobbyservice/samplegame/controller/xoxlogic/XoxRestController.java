@@ -3,10 +3,7 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 import com.google.gson.Gson;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.ActionGenerator;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.GameRestController;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.TokenResolver;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.*;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.LauncherInfo;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Player;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Board;
@@ -25,7 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /***
- * Rest controller for API endpoints of the Xox game.
+ * Rest controller for all API endpoints of the Xox game.
  *
  * @Author: Maximilian Schiedermeier
  * @Date: December 2020
@@ -38,6 +35,7 @@ public class XoxRestController implements GameRestController {
     private final GameManager<XoxGame> gameManager;
     private final ActionGenerator actionGenerator;
     private final String gameServiceName;
+    private final ActionInterpreter actionInterpreter;
 
     // This controller holds an additional BroadCastManager per game.
     // Calling touch on the manager allows an unblocking of clients that long poll the board resource.
@@ -45,9 +43,10 @@ public class XoxRestController implements GameRestController {
     private final long longPollTimeout;
 
     public XoxRestController(
-            @Autowired ActionGenerator actionGenerator, GameManager<XoxGame> gameManager, TokenResolver tokenResolver,
+            @Autowired ActionGenerator actionGenerator, GameManager<XoxGame> gameManager, TokenResolver tokenResolver, ActionInterpreter actionInterpreter,
             @Value("${gameservice.name}") String gameServiceName, @Value("${long.poll.timeout}") long longPollTimeout) {
         this.actionGenerator = actionGenerator;
+        this.actionInterpreter = actionInterpreter;
         this.gameManager = gameManager;
         this.gameServiceName = gameServiceName;
         this.tokenResolver = tokenResolver;
@@ -186,7 +185,49 @@ public class XoxRestController implements GameRestController {
         }
     }
 
-    // ToDo: Add handler to accept incoming actions. After every action, verify if the game is over.
+    @Override
+    @PostMapping(value = "/api/games/{gameId}/players/playername/actions/{actionMD5}")
+    public ResponseEntity<String> selectAction(@PathVariable long gameId, @PathVariable String player, @PathVariable String actionMD5, @RequestParam String accessToken) {
+
+        try {
+            // Verify the requested game exists
+            if (!gameManager.isExistentGameId(gameId))
+                throw new ModelAccessException("Can not retrieve players for game " + gameId + ". Not a valid game id.");
+
+            // Verify the provided token is a player token
+            if (tokenResolver.isPlayerToken(accessToken))
+                throw new LogicException("Received token is an admin token but a player token is required.");
+
+            // Verify the provided token belongs to the specified player
+            if (tokenResolver.isMatchingPlayer(player, accessToken))
+                throw new LogicException("Received token does not match player of to accessed resource.");
+
+            // Verify the provided player is a participant of the game
+            if (!isPlayer(gameId, player))
+                throw new LogicException("Action bundle can not be created. The provided player is not a participant of the referenced game.");
+
+            // Verify the selected action was actually offered
+            XoxGame xoxGame = gameManager.getGameById(gameId);
+            PlayerReadOnly playerObject = xoxGame.getPlayerByName(player);
+            Map<String, Action> actions = actionGenerator.generateActions(xoxGame, playerObject));
+            if(!actions.containsKey(actionMD5))
+                throw new LogicException("Received MD5 does not match any previously offered action.");
+
+            // Looks good - perform the action by passing it to the XoxActionInterpreter
+            Action selectedAction = actions.get(actionMD5);
+            actionInterpreter.interpretAndApplyAction(selectedAction, xoxGame);
+
+            // Touch the board, to update all subscribed clients
+            broadcastContentManagers.get(gameId).touch();
+
+        } catch (ModelAccessException | LogicException e) {
+
+            // Something went wrong. Send a http-400 and pass the exception message as body payload.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+    }
+
 
     /**
      * Helper method that iterates over player registered for a game and compares to a provided player name.

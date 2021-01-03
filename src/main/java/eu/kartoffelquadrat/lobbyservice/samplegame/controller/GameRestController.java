@@ -60,7 +60,18 @@ public interface GameRestController {
      *
      * @param gameId      as the key to resolve the referenced game-instance
      * @param player      as the player requesting a set of available actions
-     * @param accessToken as the
+     * @param accessToken as the OAuth2 Access token used to authorize this operation
      */
     ResponseEntity<String> getActions(long gameId, String player, String accessToken);
+
+    /**
+     * Blackboard-style way to allow a client select a specific operation. The operation is identified by the MD5
+     * representation of it's JSON serialization.
+     *
+     * @param gameId      as the key to resolve the referenced game-instance
+     * @param player      as the player requesting to play an action
+     * @param actionMD5   as the identifier of the selected action
+     * @param accessToken as the
+     */
+    ResponseEntity<String> selectAction(long gameId, String player, String actionMD5, String accessToken);
 }
