@@ -55,6 +55,18 @@ This second option allows an automated container-based power up with the Lobby-S
 
  > Not yet supported!
 
+## Open tasks
+
+ * Update this markdown
+   * add sample jsons
+   * update tree (add getter for stats)
+   * mention action philosophy / blackboard style
+   * add screenshots
+ * properly close sessions on game end
+ * write a docker file / docker compose integration with LS
+ * add JS logic to webui
+ * document property file attributes
+
 
 ## Usage
 
