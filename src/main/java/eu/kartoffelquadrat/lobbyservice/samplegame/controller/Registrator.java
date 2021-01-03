@@ -23,7 +23,11 @@ import org.springframework.stereotype.Component;
 public class Registrator {
 
     private String lobbyServiceLocation;
-    private String gameServiceName;
+
+
+    private String gameServiceLocation;
+
+    private String gameServicePort;
 
     @Value("${oauth2.name}")
     private String serviceOauthName;
@@ -35,11 +39,17 @@ public class Registrator {
 
     @Autowired
     Registrator(@Value("${gameservice.name}")
-                        String gameServiceName, @Value("${lobbyservice.location}")
-                        String lobbyServiceLocation) {
-        this.gameServiceName = gameServiceName;
+                        String gameServiceName,
+                @Value("${lobbyservice.location}")
+                        String lobbyServiceLocation,
+                @Value("${gameservice.location}")
+                        String gameServiceLocation,
+                @Value("${server.port}")
+                        String gameServicePort) {
         this.lobbyServiceLocation = lobbyServiceLocation;
-        registrationParameters = new GameServerParameters(gameServiceName, lobbyServiceLocation + gameServiceName, 2, 2, "true");
+        this.gameServiceLocation = gameServiceLocation;
+        this.gameServicePort = gameServicePort;
+        registrationParameters = new GameServerParameters(gameServiceName, gameServiceLocation + ":"+ gameServicePort + "/"+ gameServiceName, 2, 2, "true");
         System.out.println("LS-location: " + lobbyServiceLocation);
     }
 
