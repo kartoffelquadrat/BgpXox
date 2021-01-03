@@ -7,7 +7,7 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.*;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.GameManager;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
-import eu.kartoffelquadrat.lobbyservice.samplegame.model.Ranking;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Ranking;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxLocalGameManager;
 import org.junit.Test;

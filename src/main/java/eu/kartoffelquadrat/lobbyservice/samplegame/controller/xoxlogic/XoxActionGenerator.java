@@ -81,7 +81,7 @@ public class XoxActionGenerator implements ActionGenerator {
             return new LinkedHashMap<>();
 
         // If not the player's turn, return an empty set. (Check is performed by comparing the name of the current player)
-        if (player.equals(xoxGame.getCurrentPlayerName()))
+        if (!player.getName().toLowerCase().equals(xoxGame.getCurrentPlayerName().toLowerCase()))
             return new LinkedHashMap<>();
 
         // Iterate over board and add an action for every unoccupied cell.

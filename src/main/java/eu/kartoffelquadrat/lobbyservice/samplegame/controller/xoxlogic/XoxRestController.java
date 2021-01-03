@@ -6,6 +6,7 @@ import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.*;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.LauncherInfo;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Player;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Ranking;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Board;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.GameManager;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
@@ -36,11 +37,15 @@ public class XoxRestController implements GameRestController {
     private final ActionGenerator actionGenerator;
     private final String gameServiceName;
     private final ActionInterpreter actionInterpreter;
-
     // This controller holds an additional BroadCastManager per game.
     // Calling touch on the manager allows an unblocking of clients that long poll the board resource.
     private final Map<Long, BroadcastContentManager<Board>> broadcastContentManagers;
     private final long longPollTimeout;
+    @Value("${debug.skip.registration}")
+    private boolean skipTokenValidation;
+
+    @Autowired
+    RankingGenerator rankingGenerator;
 
     public XoxRestController(
             @Autowired ActionGenerator actionGenerator, GameManager<XoxGame> gameManager, TokenResolver tokenResolver, ActionInterpreter actionInterpreter,
@@ -65,7 +70,7 @@ public class XoxRestController implements GameRestController {
 
     @Override
     @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
-    public ResponseEntity launchGame(@PathVariable long gameId, @RequestBody LauncherInfo launcherInfo, @RequestParam String accessToken) {
+    public ResponseEntity launchGame(@PathVariable long gameId, @RequestBody LauncherInfo launcherInfo) {
 
         try {
             if (launcherInfo == null || launcherInfo.getGameServer() == null)
@@ -88,14 +93,12 @@ public class XoxRestController implements GameRestController {
 
     @Override
     @DeleteMapping("/api/games/{gameId}")
-    public ResponseEntity deleteGame(@PathVariable long gameId, @RequestParam String accessToken) {
+    public ResponseEntity deleteGame(@PathVariable long gameId) throws LogicException {
 
         try {
             // Verify the provided game id is valid
             if (!gameManager.isExistentGameId(gameId))
                 throw new ModelAccessException("Game can not be removed. No game associated to provided gameId");
-
-            // ToDo: Verify how this changes if a creator token is used. Inspect LS sources if termination of running games is allowed for creators.
 
             // Looks good, remove the game on model side, return an Http-OK.
             gameManager.removeGame(gameId, true);
@@ -154,20 +157,24 @@ public class XoxRestController implements GameRestController {
 
     @Override
     @GetMapping(value = "/api/games/{gameId}/players/{player}/actions", produces = "application/json; charset=utf-8")
-    public ResponseEntity getActions(@PathVariable long gameId, @PathVariable String player, @RequestParam String accessToken) {
+    public ResponseEntity getActions(@PathVariable long gameId, @PathVariable String player, @RequestParam(name = "access_token") String accessToken) {
 
         try {
             // Verify the requested game exists
             if (!gameManager.isExistentGameId(gameId))
                 throw new ModelAccessException("Can not retrieve players for game " + gameId + ". Not a valid game id.");
 
-            // Verify the provided token is a player token
-            if (tokenResolver.isPlayerToken(accessToken))
-                throw new LogicException("Received token is an admin token but a player token is required.");
+            if (skipTokenValidation)
+                System.out.println("***WARNING*** Token verification skipped.");
+            else {
+                // Verify the provided token is a player token
+                if (tokenResolver.isPlayerToken(accessToken))
+                    throw new LogicException("Received token is an admin token but a player token is required.");
 
-            // Verify the provided token belongs to the specified player
-            if (tokenResolver.isMatchingPlayer(player, accessToken))
-                throw new LogicException("Received token does not match player of to accessed resource.");
+                // Verify the provided token belongs to the specified player
+                if (tokenResolver.isMatchingPlayer(player, accessToken))
+                    throw new LogicException("Received token does not match player of to accessed resource.");
+            }
 
             // Verify the provided player is a participant of the game
             if (!isPlayer(gameId, player))
@@ -186,21 +193,25 @@ public class XoxRestController implements GameRestController {
     }
 
     @Override
-    @PostMapping(value = "/api/games/{gameId}/players/playername/actions/{actionMD5}")
-    public ResponseEntity<String> selectAction(@PathVariable long gameId, @PathVariable String player, @PathVariable String actionMD5, @RequestParam String accessToken) {
+    @PostMapping(value = "/api/games/{gameId}/players/{player}/actions/{actionMD5}")
+    public ResponseEntity<String> selectAction(@PathVariable long gameId, @PathVariable String player, @PathVariable String actionMD5, @RequestParam(name = "access_token") String accessToken) {
 
         try {
             // Verify the requested game exists
             if (!gameManager.isExistentGameId(gameId))
                 throw new ModelAccessException("Can not retrieve players for game " + gameId + ". Not a valid game id.");
 
-            // Verify the provided token is a player token
-            if (tokenResolver.isPlayerToken(accessToken))
-                throw new LogicException("Received token is an admin token but a player token is required.");
+            if (skipTokenValidation)
+                System.out.println("***WARNING*** Token verification skipped.");
+            else {
+                // Verify the provided token is a player token
+                if (tokenResolver.isPlayerToken(accessToken))
+                    throw new LogicException("Received token is an admin token but a player token is required.");
 
-            // Verify the provided token belongs to the specified player
-            if (tokenResolver.isMatchingPlayer(player, accessToken))
-                throw new LogicException("Received token does not match player of to accessed resource.");
+                // Verify the provided token belongs to the specified player
+                if (tokenResolver.isMatchingPlayer(player, accessToken))
+                    throw new LogicException("Received token does not match player of to accessed resource.");
+            }
 
             // Verify the provided player is a participant of the game
             if (!isPlayer(gameId, player))
@@ -210,7 +221,7 @@ public class XoxRestController implements GameRestController {
             XoxGame xoxGame = gameManager.getGameById(gameId);
             PlayerReadOnly playerObject = xoxGame.getPlayerByName(player);
             Map<String, Action> actions = actionGenerator.generateActions(xoxGame, playerObject);
-            if(!actions.containsKey(actionMD5))
+            if (!actions.containsKey(actionMD5))
                 throw new LogicException("Received MD5 does not match any previously offered action.");
 
             // Looks good - perform the action by passing it to the XoxActionInterpreter
@@ -226,7 +237,14 @@ public class XoxRestController implements GameRestController {
             // Something went wrong. Send a http-400 and pass the exception message as body payload.
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
 
+    @Override
+    @GetMapping("/api/games/{gameId}")
+    public ResponseEntity<String> getRanking(@PathVariable long gameId) throws ModelAccessException, LogicException {
+
+        Ranking ranking = rankingGenerator.computeRanking(gameManager.getGameById(gameId));
+        return ResponseEntity.status(HttpStatus.OK).body(new Gson().toJson(ranking));
     }
 
     /**

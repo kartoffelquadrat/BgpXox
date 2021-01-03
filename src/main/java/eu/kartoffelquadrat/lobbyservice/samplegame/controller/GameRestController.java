@@ -1,6 +1,7 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller;
 
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.LauncherInfo;
+import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -20,18 +21,16 @@ public interface GameRestController {
      *
      * @param gameId       as the game key.
      * @param launcherInfo as additional parameters for the game to be created
-     * @param accessToken  as the oauth2 token used to authorize this operation. Must be a user token.
      */
-    ResponseEntity<String> launchGame(long gameId, LauncherInfo launcherInfo, String accessToken);
+    ResponseEntity<String> launchGame(long gameId, LauncherInfo launcherInfo);
 
     /**
-     * Deletes a new game, identified by the provided unique long value, no matter if finished or still running.
+     * Deletes a new game, identified by the provided unique long value. This endpoint is commonly not exposed by the
+     * API gateway (only accessible by lobby service.). Therefore no token is required to authorize this operation.
      *
      * @param gameId      as the game key.
-     * @param accessToken as the oauth2 token used to authorize this operation. Must be an admin token. ToDo: Verify
-     *                    this!
      */
-    ResponseEntity<String> deleteGame(long gameId, String accessToken);
+    ResponseEntity<String> deleteGame(long gameId) throws LogicException;
 
     /**
      * Getter for the game board. This end point should be refreshed regularly, to allow for asynchronous client
@@ -74,4 +73,11 @@ public interface GameRestController {
      * @param accessToken as the
      */
     ResponseEntity<String> selectAction(long gameId, String player, String actionMD5, String accessToken);
+
+    /**
+     * Returns current player scores as a serialized ranking object.
+     *
+     * @param gameId
+     */
+    ResponseEntity<String> getRanking(long gameId) throws ModelAccessException, LogicException;
 }

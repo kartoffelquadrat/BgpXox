@@ -1,7 +1,7 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller;
 
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Game;
-import eu.kartoffelquadrat.lobbyservice.samplegame.model.Ranking;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Ranking;
 import org.springframework.stereotype.Component;
 
 /**

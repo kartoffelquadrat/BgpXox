@@ -48,6 +48,9 @@ public class XoxActionInterpreter implements ActionInterpreter {
 
         // Apply action on model
         xoxGame.getBoard().occupy(xoxClaimFieldAction.getX(), xoxClaimFieldAction.getY(), xoxGame.isFirstPlayer(xoxClaimFieldAction.getPlayer()));
+
+        // Update current player
+        xoxGame.setCurrentPlayer(1-xoxGame.getCurrentPlayerIndex());
     }
 
     /**
