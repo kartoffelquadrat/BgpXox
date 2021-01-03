@@ -113,17 +113,4 @@ public class DrawTest extends XoxTestUtils {
         assert(ranking.getScoresDescending()[0] == 0);
         assert(ranking.getScoresDescending()[1] == 0);
     }
-
-    /**
-     * Helper method to extract the desired action of an actions bundle. The action is identified by gird position.
-     */
-    private XoxClaimFieldAction findActionForPosition(XoxClaimFieldAction[] actions, int xPos, int yPos) {
-
-        for(XoxClaimFieldAction action : actions)
-        {
-            if(action.getX() == xPos && action.getY() == yPos)
-                return action;
-        }
-        throw new RuntimeException("Requested action is not contained in provided action bundle.");
-    }
 }

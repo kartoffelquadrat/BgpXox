@@ -38,6 +38,10 @@ public class XoxActionGenerator implements ActionGenerator {
         if (!isParticipant(xoxGame, player))
             throw new LogicException("Actions can no be generated for player " + player.getName() + ". Is not a participant of the game.");
 
+        // If the game is already over, return an empty set
+        if(xoxGame.isFinished())
+            return new XoxClaimFieldAction[0];
+
         // If not the player's turn, return an empty set. (Check is performed by comparing the name of the current player)
         if (player.equals(xoxGame.getCurrentPlayerName()))
             return new XoxClaimFieldAction[0];
