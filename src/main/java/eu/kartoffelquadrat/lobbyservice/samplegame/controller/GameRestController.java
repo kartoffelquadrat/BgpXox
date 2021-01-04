@@ -30,7 +30,7 @@ public interface GameRestController {
      *
      * @param gameId      as the game key.
      */
-    ResponseEntity<String> deleteGame(long gameId) throws LogicException;
+    ResponseEntity<String> deleteGame(long gameId);
 
     /**
      * Getter for the game board. This end point should be refreshed regularly, to allow for asynchronous client
@@ -79,5 +79,5 @@ public interface GameRestController {
      *
      * @param gameId
      */
-    ResponseEntity<String> getRanking(long gameId) throws ModelAccessException, LogicException;
+    ResponseEntity<String> getRanking(long gameId);
 }

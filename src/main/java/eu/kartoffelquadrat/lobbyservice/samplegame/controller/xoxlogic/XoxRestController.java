@@ -41,11 +41,10 @@ public class XoxRestController implements GameRestController {
     // Calling touch on the manager allows an unblocking of clients that long poll the board resource.
     private final Map<Long, BroadcastContentManager<Board>> broadcastContentManagers;
     private final long longPollTimeout;
-    @Value("${debug.skip.registration}")
-    private boolean skipTokenValidation;
-
     @Autowired
     RankingGenerator rankingGenerator;
+    @Value("${debug.skip.registration}")
+    private boolean skipTokenValidation;
 
     public XoxRestController(
             @Autowired ActionGenerator actionGenerator, GameManager<XoxGame> gameManager, TokenResolver tokenResolver, ActionInterpreter actionInterpreter,
@@ -93,7 +92,7 @@ public class XoxRestController implements GameRestController {
 
     @Override
     @DeleteMapping("/api/games/{gameId}")
-    public ResponseEntity deleteGame(@PathVariable long gameId) throws LogicException {
+    public ResponseEntity deleteGame(@PathVariable long gameId) {
 
         try {
             // Verify the provided game id is valid
@@ -241,10 +240,16 @@ public class XoxRestController implements GameRestController {
 
     @Override
     @GetMapping("/api/games/{gameId}")
-    public ResponseEntity<String> getRanking(@PathVariable long gameId) throws ModelAccessException, LogicException {
+    public ResponseEntity<String> getRanking(@PathVariable long gameId) {
 
-        Ranking ranking = rankingGenerator.computeRanking(gameManager.getGameById(gameId));
-        return ResponseEntity.status(HttpStatus.OK).body(new Gson().toJson(ranking));
+        try {
+            Ranking ranking = rankingGenerator.computeRanking(gameManager.getGameById(gameId));
+            return ResponseEntity.status(HttpStatus.OK).body(new Gson().toJson(ranking));
+        } catch (ModelAccessException | LogicException e) {
+
+            // Something went wrong. Send a http-400 and pass the exception message as body payload.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     /**
