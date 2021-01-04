@@ -6,14 +6,16 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" th:href="@{/style.css}">
-    <title>Tic Tac Toe</title>
+    <script type="text/javascript" th:src="@{/xox.js}"></script>
+    <script type="text/javascript" th:src="@{/md5.js}"></script>
+    <script type="text/javascript" th:src="@{/asyncGet.js}"></script>
+    <title>Xox</title>
 </head>
-<body>
-<div class="container">
-    <h1 class="title">Tic <span>Tac</span> Toe</h1>
-    <div class="status-action">
-        <div class="status">× is next</div>
-        <div class="reset">Reset</div>
+<body onload="verifyGameExists()">
+<div id='xox-container' class="container">
+    <h1 class="title">X<span>O</span>X</h1>
+    <div class="status-div">
+        <div class="status-text">It's Maex' turn.</div>
     </div>
     <div class="game-grid">
         <div class="game-cell"></div>
