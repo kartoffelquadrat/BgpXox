@@ -1,3 +1,5 @@
+let actions;
+
 function verifyGameExists() {
 
     fetch('/Xox/api/games/' + getGameId())
@@ -7,7 +9,7 @@ function verifyGameExists() {
                 throw Error(json.error);
             else
                 // ARL-long poll on "board"-resource that causes re-rendering whenever the board changed.
-                observeResource('/Xox/api/games/' + getGameId() + '/board?hash=', renderBoard, markOffline, "");
+                observeResource('/Xox/api/games/' + getGameId() + '/board?hash=', xoxBoardUpdate, markOffline, "");
         })
         .catch(error => {
             // Seems like the game does not exist:
@@ -24,20 +26,76 @@ function getGameId() {
 }
 
 /**
- * Helper method to mark that connectino to servier is lost
+ * Helper method to mark that connection to server is lost
  */
 function markOffline() {
     alert('connection to server lost');
 }
 
-function xoxBoardUpdate(board)
-{
+function xoxBoardUpdate(board) {
     // update board
     renderBoard(board);
 
-    // update available handlers / visuals
+    // retrieve updated set of actions
+    actions = associateActions();
 
     // update status string
+}
+
+/**
+ * Retrieves a map of actions. Keys are the MD5 values of their serialized string representation
+ * Assigns the action-hashes to the corresponding cells.
+ */
+function associateActions() {
+
+    // unregister all actions registered so far. (for clicks on all cells)
+    $(".game-cell").each(function () {
+        $(this).off();
+    });
+
+    fetch('/Xox/api/games/' + getGameId() + '/players/' + 'maex' + '/actions?access_token=' + 'foo')
+        .then(result => result.json())
+        .then(json => {
+            if (json.error) // assumes that the server is nice enough to send an error message
+                throw Error(json.error);
+            else {
+                // associate new click handler to every referenced cell (entries in json that encodes action map)
+                $.each(json, function (actionhash, action) {
+                    bindActionHashToCellClick(action.y, action.x, action.player.name, actionhash);
+                })
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.toString());
+        });
+}
+
+function bindActionHashToCellClick(x, y, player, hash) {
+    // resolve action position to corresponding html element
+    $('#' + x + y).click(function () {
+        playAction(player, hash)
+    });
+}
+
+/**
+ * Sends a post request to the API to play a specific action
+ * @param player as the player who plays the action
+ * @param hash as the id of the action
+ */
+function playAction(player, hash) {
+
+    // Send a post request to /Xox/api/games/{gameid}/players/{player}/actions/{action}
+    // Add access_token as request parameter to authenticate
+    fetch('/Xox/api/games/' + getGameId() + '/players/' + player + '/actions/' + hash + '?access_token=' + 'foo', {
+        method: 'post'
+    })
+        .then(reply => {
+            if (reply.status == 401)
+                alert('Token invalid. Logout required');
+            //logout(); // ToDo: First try to renew token, call logout() if that failed.
+            if (reply.status != 200)
+                console.log("Failed to start session. Server replied: " + reply.status);
+        });
 }
 
 /**
