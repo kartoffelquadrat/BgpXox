@@ -49,11 +49,24 @@ function updateStatusBar()
     statusbar.innerHTML= "THIS IS NEW!";
 
     // find out if the game is already finished
+    // => access stats object: http://127.0.0.1:4244/Xox/api/games/12345
+    // => gives something like: {"gameOver":false,"playersDescending":[{"name":"maex","preferredColour":"#CAFFEE"},{"name":"joerg","preferredColour":"#1C373A"}],"scoresDescending":[0,0]}
+    fetch('/Xox/api/games/' + getGameId())
+        .then(result => result.json())
+        .then(json => {
+            if (json.error) // assumes that the server is nice enough to send an error message
+                throw Error(json.error);
+            else
+                console.log("Game stats are: " + json);
+        })
+        .catch(error => {
+            // Seems like the game does not exist:
+            alert('Error while getting stats: '+error);
+        });
 
     // Game finished: Display winner
 
     // Game running: Display whos turn it is
-
 }
 
 /**
