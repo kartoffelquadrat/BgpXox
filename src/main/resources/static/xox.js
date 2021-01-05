@@ -40,6 +40,20 @@ function xoxBoardUpdate(board) {
     actions = associateActions();
 
     // update status string
+    updateStatusBar();
+}
+
+function updateStatusBar()
+{
+    let statusbar = document.getElementById('status-bar');
+    statusbar.innerHTML= "THIS IS NEW!";
+
+    // find out if the game is already finished
+
+    // Game finished: Display winner
+
+    // Game running: Display whos turn it is
+
 }
 
 /**
