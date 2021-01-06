@@ -1,6 +1,7 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic;
 
 import com.google.gson.Gson;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.*;
@@ -45,6 +46,9 @@ public class XoxRestController implements GameRestController {
     RankingGenerator rankingGenerator;
     @Value("${debug.skip.registration}")
     private boolean skipTokenValidation;
+
+    @Autowired
+    private Registrator registrator;
 
     public XoxRestController(
             @Autowired ActionGenerator actionGenerator, GameManager<XoxGame> gameManager, TokenResolver tokenResolver, ActionInterpreter actionInterpreter,
@@ -229,9 +233,14 @@ public class XoxRestController implements GameRestController {
 
             // Touch the board, to update all subscribed clients
             broadcastContentManagers.get(gameId).touch();
+
+            // if the game was ended by the action, notify lobbyservice, close board subscriptions.
+            if (xoxGame.isFinished())
+                registrator.notifyGameOver(gameId);
+
             return ResponseEntity.status(HttpStatus.OK).build();
 
-        } catch (ModelAccessException | LogicException e) {
+        } catch (ModelAccessException | LogicException | UnirestException e) {
 
             // Something went wrong. Send a http-400 and pass the exception message as body payload.
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

@@ -144,4 +144,24 @@ public class Registrator {
     }
 
     // ToDo: Add method to notify LS about an ended game.
+    public void notifyGameOver(long gameId) throws UnirestException {
+        if (skipLobbyServiceCallbacks) {
+            System.out.println("***WARNING*** Notify game-over skipped.");
+            return;
+        }
+
+        // Get a valid access token, to authenticate for the un-registration.
+        String accessToken = getToken();
+
+        // Build and send an authenticated game-over request to the LS API.
+        HttpResponse<String> response = Unirest
+                .delete(lobbyServiceLocation + "/api/sessions/"+gameId)
+                .header("Authorization", "Bearer " + accessToken)
+                .asString();
+
+        // Verify the registration was accepted
+        if (response.getStatus() != 200)
+            System.out.println("LobbyService rejected Game-Over notification of Xox session. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+
+    }
 }

@@ -54,10 +54,6 @@ function getGameStatusAndUpdateBar(actions) {
             // Seems like the game does not exist:
             alert('Error while getting stats: ' + error);
         });
-
-    // Game finished: Display winner
-
-    // Game running: Display whos turn it is
 }
 
 /**
@@ -73,9 +69,10 @@ function updateBar(gamestats, actions) {
     // if the game is over, display the winner / draw
     if (gamestats.gameOver) {
         statusbar.innerHTML = '--- GAME OVER ---';
+        // ToDo: display winner.
     }
 
-    // if the game is still running, display whos turn it is (not your turn if actions object is empty)
+    // if the game is still running, display who's turn it is (not your turn if actions object is empty)
     else {
 
         if(Object.keys(actions).length == 0)
@@ -83,8 +80,6 @@ function updateBar(gamestats, actions) {
         else
             statusbar.innerHTML = 'It\'s your turn, '+capitalizeFirstLetter(getUserName())+'!';
     }
-
-//    statusbar.innerHTML = getUserName();
 }
 
 function getOtherPlayerName(gamestats)
