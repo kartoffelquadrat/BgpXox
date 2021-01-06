@@ -22,8 +22,6 @@ public class TokenResolver {
 
     private String lobbyServiceLocation;
 
-    private GameServerParameters registrationParameters;
-
     @Autowired
     TokenResolver(@Value("${lobbyservice.location}")
                           String lobbyServiceLocation) {
@@ -44,7 +42,7 @@ public class TokenResolver {
                 .header("Authorization", "Bearer " + accessToken)
                 .asString();
         if (response.getStatus() != 200)
-            throw new RuntimeException("Unable to resolve provided token to a username!");
+            throw new LogicException("Unable to resolve provided token to a username!");
         return response.getBody();
     }
 
@@ -62,7 +60,7 @@ public class TokenResolver {
                 .header("Authorization", "Bearer " + accessToken)
                 .asString();
         if (response.getStatus() != 200)
-            throw new RuntimeException("Unable to resolve provided token to a role!");
+            throw new LogicException("Unable to resolve provided token to a role!");
         return response.getBody();
     }
 

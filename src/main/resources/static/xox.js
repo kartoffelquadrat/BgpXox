@@ -1,5 +1,3 @@
-let actions;
-
 function verifyGameExists() {
 
     fetch('/Xox/api/games/' + getGameId())
@@ -36,32 +34,25 @@ function xoxBoardUpdate(board) {
     // update board
     renderBoard(board);
 
-    // retrieve updated set of actions
-    actions = associateActions();
-
-    // update status string
-    updateStatusBar();
+    // retrieve updated set of actions, this internally also triggers status field updates (on success)
+    associateActions();
 }
 
-function updateStatusBar()
-{
-    let statusbar = document.getElementById('status-bar');
-    statusbar.innerHTML= "THIS IS NEW!";
-
-    // find out if the game is already finished
+function getGameStatusAndUpdateBar(actions) {
     // => access stats object: http://127.0.0.1:4244/Xox/api/games/12345
-    // => gives something like: {"gameOver":false,"playersDescending":[{"name":"maex","preferredColour":"#CAFFEE"},{"name":"joerg","preferredColour":"#1C373A"}],"scoresDescending":[0,0]}
     fetch('/Xox/api/games/' + getGameId())
         .then(result => result.json())
         .then(json => {
             if (json.error) // assumes that the server is nice enough to send an error message
                 throw Error(json.error);
-            else
-                console.log("Game stats are: " + json);
+            else {
+                updateBar(json, actions);
+            }
+
         })
         .catch(error => {
             // Seems like the game does not exist:
-            alert('Error while getting stats: '+error);
+            alert('Error while getting stats: ' + error);
         });
 
     // Game finished: Display winner
@@ -70,17 +61,48 @@ function updateStatusBar()
 }
 
 /**
+ * Called upon retrieval of gamestats by getGameStatusAndUpdateBar. The parameter is a json.
+ *
+ * @param gamestats sample structure: {"gameOver":false,"playersDescending":[{"name":"maex","preferredColour":"#CAFFEE"},{"name":"joerg","preferredColour":"#1C373A"}],"scoresDescending":[0,0]}
+ */
+function updateBar(gamestats, actions) {
+
+    console.log("Game stats are: " + gamestats);
+    let statusbar = document.getElementById('status-bar');
+
+    // if the game is over, display the winner / draw
+    if (gamestats.gameOver) {
+        statusbar.innerHTML = 'GAME OVER.';
+    }
+
+    // if the game is still running, display whos turn it is (not your turn if actions object is empty)
+    else {
+
+        if(Object.keys(actions).length == 0)
+            statusbar.innerHTML = 'NOT YOUR TURN';
+        else
+            statusbar.innerHTML = 'YOUR TURN';
+    }
+
+//    statusbar.innerHTML = getUserName();
+}
+
+/**
  * Retrieves a map of actions. Keys are the MD5 values of their serialized string representation
  * Assigns the action-hashes to the corresponding cells.
  */
 function associateActions() {
+
+    // reset actions
+    actions = {};
 
     // unregister all actions registered so far. (for clicks on all cells)
     $(".game-cell").each(function () {
         $(this).off();
     });
 
-    fetch('/Xox/api/games/' + getGameId() + '/players/' + 'maex' + '/actions?access_token=' + 'foo')
+    // update local actions object, reassign handlers.
+    fetch('/Xox/api/games/' + getGameId() + '/players/' + getUserName() + '/actions?access_token=' + 'foo')
         .then(result => result.json())
         .then(json => {
             if (json.error) // assumes that the server is nice enough to send an error message
@@ -89,7 +111,10 @@ function associateActions() {
                 // associate new click handler to every referenced cell (entries in json that encodes action map)
                 $.each(json, function (actionhash, action) {
                     bindActionHashToCellClick(action.y, action.x, action.player.name, actionhash);
-                })
+                });
+
+                // also update status fields (json is actions object)
+                getGameStatusAndUpdateBar(json);
             }
         })
         .catch(error => {
