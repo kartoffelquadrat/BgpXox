@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @author Maximilian Schiedermeier
  */
-public class WinnerTest extends XoxTestUtils {
+public class WinnerTestHorizontal extends XoxTestUtils {
 
     @Test
     public void testWinX() throws ModelAccessException, LogicException {
@@ -30,11 +30,11 @@ public class WinnerTest extends XoxTestUtils {
         PlayerReadOnly o = game.getPlayerByName("O");
 
         // Draw pattern, X begins
-        //  X O X   1 3 5
-        //  X X O   2 4 -
-        //  O X O   - - -
+        //  X X X   1 3 5
+        //  O O -   2 4 -
+        //  - - -   - - -
         XoxActionGenerator actionGenerator = new XoxActionGenerator();
-        EndingAnalyzer xoxEndingAnalyzer = new XoxEndingAnalyzer();
+        XoxEndingAnalyzer endingAnalyzer = new XoxEndingAnalyzer();
 
         // 1)
         // X retrieves actions, decides for action on top left.
@@ -43,7 +43,7 @@ public class WinnerTest extends XoxTestUtils {
         XoxClaimFieldAction action1 = findActionForPosition(xActions, 0, 0);
 
         // Apply first action
-        XoxActionInterpreter actionInterpreter = new XoxActionInterpreter(actionGenerator);
+        XoxActionInterpreter actionInterpreter = new XoxActionInterpreter(actionGenerator, endingAnalyzer);
         actionInterpreter.interpretAndApplyAction(action1, game);
 
         // 2)
@@ -72,12 +72,13 @@ public class WinnerTest extends XoxTestUtils {
         actionInterpreter.interpretAndApplyAction(action5, game);
 
         // At this point the game should be a won by X.
-        xoxEndingAnalyzer.analyzeAndUpdate(game);
+//        xoxEndingAnalyzer.analyzeAndUpdate(game);
         assert (game.isFinished());
 
         // Verify there is no winner
         XoxRankingGenerator rankingGenerator = new XoxRankingGenerator();
         Ranking ranking = rankingGenerator.computeRanking(game);
+        assert (ranking.isGameOver() == true);
 
         // In case of a draw, both players should hold 0 points.
         assert (ranking.getScoresDescending()[0] == 1);

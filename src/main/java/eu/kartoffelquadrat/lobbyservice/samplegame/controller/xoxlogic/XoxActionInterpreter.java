@@ -4,10 +4,8 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.controller.Action;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.ActionGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.ActionInterpreter;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.LogicException;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Player;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Game;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
-import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,8 +25,11 @@ public class XoxActionInterpreter implements ActionInterpreter {
 
     private final ActionGenerator actionGenerator;
 
-    public XoxActionInterpreter(@Autowired ActionGenerator actionGenerator) {
+    private final XoxEndingAnalyzer endingAnalyzer;
+
+    public XoxActionInterpreter(@Autowired ActionGenerator actionGenerator, @Autowired XoxEndingAnalyzer endingAnalyzer) {
         this.actionGenerator = actionGenerator;
+        this.endingAnalyzer = endingAnalyzer;
     }
 
     @Override
@@ -51,6 +52,9 @@ public class XoxActionInterpreter implements ActionInterpreter {
 
         // Update current player
         xoxGame.setCurrentPlayer(1-xoxGame.getCurrentPlayerIndex());
+
+        // Pass Game-Over test on model instance
+        endingAnalyzer.analyzeAndUpdate(game);
     }
 
     /**

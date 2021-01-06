@@ -72,19 +72,26 @@ function updateBar(gamestats, actions) {
 
     // if the game is over, display the winner / draw
     if (gamestats.gameOver) {
-        statusbar.innerHTML = 'GAME OVER.';
+        statusbar.innerHTML = '--- GAME OVER ---';
     }
 
     // if the game is still running, display whos turn it is (not your turn if actions object is empty)
     else {
 
         if(Object.keys(actions).length == 0)
-            statusbar.innerHTML = 'NOT YOUR TURN';
+            statusbar.innerHTML = 'It\'s '+capitalizeFirstLetter(getOtherPlayerName(gamestats))+'\'s turn.';
         else
-            statusbar.innerHTML = 'YOUR TURN';
+            statusbar.innerHTML = 'It\'s your turn, '+capitalizeFirstLetter(getUserName())+'!';
     }
 
 //    statusbar.innerHTML = getUserName();
+}
+
+function getOtherPlayerName(gamestats)
+{
+    if(gamestats.playersDescending[0].name === getUserName())
+        return gamestats.playersDescending[1].name;
+    return gamestats.playersDescending[0].name;
 }
 
 /**
@@ -176,4 +183,9 @@ function renderBoard(board) {
         document.getElementById('12').classList.add(board.cells[1][2]);
     if (/\S/.test(board.cells[2][2]))
         document.getElementById('22').classList.add(board.cells[2][2]);
+}
+
+// https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
