@@ -3,7 +3,7 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans
 import java.util.LinkedList;
 
 /**
- * Bean that compiles all information of the jeson object received for every session start.
+ * Bean that compiles all information of the json object received for every session start.
  *
  * @Author: Maximilian Schiedermeier
  * @Date: December 2020

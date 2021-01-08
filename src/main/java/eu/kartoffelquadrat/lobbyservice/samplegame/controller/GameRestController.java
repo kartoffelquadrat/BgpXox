@@ -80,4 +80,9 @@ public interface GameRestController {
      * @param gameId
      */
     ResponseEntity<String> getRanking(long gameId);
+
+    /**
+     * Returns information about the lobbyservice location.
+     */
+
 }

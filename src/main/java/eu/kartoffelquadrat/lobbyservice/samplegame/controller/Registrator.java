@@ -7,6 +7,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.GameServerParameters;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.GameServiceRegistrationDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Registrator {
 
-    private String lobbyServiceLocation;
+    @Autowired
+    private GameServiceRegistrationDetails lobbyServiceLocation;
 
     private String gameServiceLocation;
 
@@ -42,17 +44,13 @@ public class Registrator {
     @Autowired
     Registrator(@Value("${gameservice.name}")
                         String gameServiceName,
-                @Value("${lobbyservice.location}")
-                        String lobbyServiceLocation,
                 @Value("${gameservice.location}")
                         String gameServiceLocation,
                 @Value("${server.port}")
                         String gameServicePort) {
-        this.lobbyServiceLocation = lobbyServiceLocation;
         this.gameServiceLocation = gameServiceLocation;
         this.gameServicePort = gameServicePort;
         registrationParameters = new GameServerParameters(gameServiceName, gameServiceLocation + ":" + gameServicePort + "/" + gameServiceName, 2, 2, "true");
-        System.out.println("LS-location: " + lobbyServiceLocation);
     }
 
     /**
@@ -71,7 +69,7 @@ public class Registrator {
 
         String bodyString = "grant_type=password&username=" + serviceOauthName + "&password=" + serviceOauthPassword;
         HttpResponse<String> response = Unirest
-                .post(lobbyServiceLocation + "/oauth/token")
+                .post(lobbyServiceLocation.getAssociatedLobbyLocation() + "/oauth/token")
                 // Authorization parameter is the base64 encoded string: "bgp-client-name:bgp-client-pw".
                 // Can remain unchanged for future games.
                 .header("Authorization", "Basic YmdwLWNsaWVudC1uYW1lOmJncC1jbGllbnQtcHc=")
@@ -107,7 +105,7 @@ public class Registrator {
         // Build and send an authenticated registration request to the LS API.
         String bodyJson = new Gson().toJson(registrationParameters);
         HttpResponse<String> response = Unirest
-                .put(lobbyServiceLocation + "/api/gameservices/Xox")
+                .put(lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/Xox")
                 .header("Authorization", "Bearer " + accessToken)
                 .header("Content-Type", "application/json")
                 .body(bodyJson)
@@ -134,7 +132,7 @@ public class Registrator {
 
         // Build and send an authenticated un-registration request to the LS API.
         HttpResponse<String> response = Unirest
-                .delete(lobbyServiceLocation + "/api/gameservices/Xox")
+                .delete(lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/Xox")
                 .header("Authorization", "Bearer " + accessToken)
                 .asString();
 
@@ -155,7 +153,7 @@ public class Registrator {
 
         // Build and send an authenticated game-over request to the LS API.
         HttpResponse<String> response = Unirest
-                .delete(lobbyServiceLocation + "/api/sessions/"+gameId)
+                .delete(lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/sessions/"+gameId)
                 .header("Authorization", "Bearer " + accessToken)
                 .asString();
 

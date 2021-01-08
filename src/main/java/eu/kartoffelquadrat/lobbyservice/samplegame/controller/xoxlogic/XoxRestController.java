@@ -6,6 +6,7 @@ import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.*;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.LauncherInfo;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.GameServiceRegistrationDetails;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Player;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.Ranking;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.Board;
@@ -22,6 +23,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 
 /***
  * Rest controller for all API endpoints of the Xox game.
@@ -44,11 +46,13 @@ public class XoxRestController implements GameRestController {
     private final long longPollTimeout;
     @Autowired
     RankingGenerator rankingGenerator;
+    @Autowired
+    GameServiceRegistrationDetails lobbyServiceLocation;
     @Value("${debug.skip.registration}")
     private boolean skipTokenValidation;
-
     @Autowired
     private Registrator registrator;
+
 
     public XoxRestController(
             @Autowired ActionGenerator actionGenerator, GameManager<XoxGame> gameManager, TokenResolver tokenResolver, ActionInterpreter actionInterpreter,
@@ -259,6 +263,14 @@ public class XoxRestController implements GameRestController {
             // Something went wrong. Send a http-400 and pass the exception message as body payload.
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    /**
+     * Endpoint for static information on the registration status.
+     */
+    @GetMapping("/")
+    public String getXoxRegistrationDetails() {
+        return new Gson().toJson(lobbyServiceLocation);
     }
 
     /**

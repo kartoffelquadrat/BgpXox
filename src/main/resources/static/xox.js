@@ -24,6 +24,17 @@ function getGameId() {
 }
 
 /**
+ * Loads lobby location and assigns it to "Lobby button."
+ */
+function associateLobbyButton() {
+
+    // ToDo: fetch GET "/", extract property "associatedLobbyLocation".
+
+    // ToDo: replace by:    window.location.href =...
+    $('#lobby-button').click(function() {alert("Lobby!");});
+}
+
+/**
  * Helper method to mark that connection to server is lost
  */
 function markOffline() {

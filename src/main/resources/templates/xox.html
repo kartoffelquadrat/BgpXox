@@ -13,7 +13,7 @@
     <script type="text/javascript" th:src="@{/asyncGet.js}"></script>
     <title>Xox</title>
 </head>
-<body onload="verifyGameExists()">
+<body onload="verifyGameExists();associateLobbyButton();">
 <div id='xox-container' class="container">
     <h1 class="title">X<span>O</span>X</h1>
     <div class="status-div">
@@ -31,5 +31,6 @@
         <div id='22' class="game-cell"></div>
     </div>
 </div>
+<span><button id="lobby-button" type="button" class="btn btn-secondary">Lobby</button></span>
 </body>
 </html>

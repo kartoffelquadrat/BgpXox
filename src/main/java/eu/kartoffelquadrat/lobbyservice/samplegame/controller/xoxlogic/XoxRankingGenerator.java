@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class XoxRankingGenerator implements RankingGenerator {
 
-
     @Override
     public Ranking computeRanking(Game game) throws LogicException {
 

@@ -1,5 +1,7 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans;
 
+import org.springframework.beans.factory.annotation.Value;
+
 /**
  * Just a bean to encapsulate all data transferred to the LS upon registration of Xox as a new gameserver. This class
  * can be copied and reused as is in other game-implementations. Only the constructor parameters need to be adjusted.
