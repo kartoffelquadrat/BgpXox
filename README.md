@@ -51,9 +51,25 @@ This first option
 
 ### Docker Compose
 
-This second option allows an automated container-based power up with the Lobby-Service Microservice architecture.
+Xox can be launched as:
 
- > Not yet supported!
+ * single service (will not work without manual and configuration for an external lobby-service instance)
+ * microservice compound
+
+#### Single Service
+
+ * first time:
+   * enable ```ENTRYPOINT``` line in ```Dockerfile-ls-xox```.
+   * build the image: ```docker build -t "ls-xox:Dockerfile" . -f Dockerfile-ls-xox```
+   * start a container: ```docker run --name=ls-xox -p 4244:4244 -d ls-xox:Dockerfile```
+ * follow up launches:  
+```docker start ls-xox```
+
+#### Microservice Compound
+
+Add the following entries to the LobbyServices ```docker-compose.yml```:
+
+
 
 ## Open tasks
 
