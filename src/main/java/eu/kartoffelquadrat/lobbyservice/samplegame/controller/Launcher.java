@@ -35,21 +35,21 @@ public class Launcher {
         }
 
         // Keep alive until "Return-Key" pressed
-        System.out.println("Xox running and registered at the LobbyService. Hit enter to unregister and shutdown.");
-        new Scanner(System.in).nextLine();
+//        System.out.println("Xox running and registered at the LobbyService. Hit enter to unregister and shutdown.");
+//        new Scanner(System.in).nextLine();
 
         // Unregister Xox at LS-GameRegistry
-        System.out.println("Unregistering...");
-        try {
-            registrator.unregisterAtLobbyService();
-        } catch (UnirestException ue) {
-            throw new RuntimeException("LobbyService not reachable at provided location.");
-        }
+//        System.out.println("Unregistering...");
+//        try {
+//            registrator.unregisterAtLobbyService();
+//        } catch (UnirestException ue) {
+//            throw new RuntimeException("LobbyService not reachable at provided location.");
+//        }
 
         // Shut down Xox backend API
-        System.out.println("Shutting down API...");
-        applicationContext.close();
-        System.out.println("[Xox terminated]");
+//        System.out.println("Shutting down API...");
+//        applicationContext.close();
+//        System.out.println("[Xox terminated]");
     }
 }
 
