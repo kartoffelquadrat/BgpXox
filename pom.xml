@@ -109,4 +109,24 @@
         </plugins>
     </build>
 
+    <profiles>
+        <!--dev profile is intended for native deployment of Xox.-->
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <activatedProperties>dev</activatedProperties>
+            </properties>
+        </profile>
+        <!--prod profile is intended for dockerized deployment of Xox.-->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod</activatedProperties>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
