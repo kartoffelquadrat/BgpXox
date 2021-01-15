@@ -26,12 +26,17 @@ Xox is split into a RESTful API backend and a Web-Interface.
 
 ## Setup
 
-Xox requires a dedicated admin account initiated at the LS. This account is not present by default. Default credentials are:
+Every game coded for the LobbyService requires credentials. In the case of Xox, the credentials are pre-registered in the Lobby-Serive's DB.
 
  * Username: ```Xox```
  * Password: ```laaPhie*aiN0```
 
-This repository ~~integrates as an optional git submodule into the LobbyService sources~~ and ~~comes with a preconfigured docker-compose file for simulatenous startup~~.
+To test and modify this game-template on your system, you need a working lobby-service instance, running in nateive mode - that is to say the LobbyService must run as a native java process.  
+
+ * Follow the official LobbyService setup instructions.
+ * Power up this sample game:  
+mvn spring-boot:run -P dev
+
 
 ### IntelliJ Run configurations:
 
