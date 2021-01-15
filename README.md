@@ -33,9 +33,9 @@ Every game coded for the LobbyService requires credentials. In the case of Xox, 
 
 To test and modify this game-template on your system, you need a working lobby-service instance, running in nateive mode - that is to say the LobbyService must run as a native java process.  
 
- * Follow the official LobbyService setup instructions.
+ * Follow the [official LobbyService setup instructions](https://github.com/kartoffelquadrat/LobbyService/blob/master/markdown/build-deploy.md#standard-setup) (dev mode).
  * Power up this sample game:  
-mvn spring-boot:run -P dev
+```mvn spring-boot:run -P dev```
 
 
 ### IntelliJ Run configurations:
