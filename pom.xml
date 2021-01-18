@@ -120,6 +120,13 @@
                 <activatedProperties>dev</activatedProperties>
             </properties>
         </profile>
+        <!--dev profile is intended for native deployment of Xox, with no calls to other services on startup-->
+        <profile>
+            <id>uidev</id>
+            <properties>
+                <activatedProperties>uidev</activatedProperties>
+            </properties>
+        </profile>
         <!--prod profile is intended for dockerized deployment of Xox.-->
         <profile>
             <id>prod</id>
