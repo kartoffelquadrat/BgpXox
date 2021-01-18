@@ -28,10 +28,18 @@ function getGameId() {
  */
 function associateLobbyButton() {
 
-    // ToDo: fetch GET "/", extract property "associatedLobbyLocation".
-
-    // ToDo: replace by:    window.location.href =...
-    $('#lobby-button').click(function() {alert("Lobby!");});
+    // get static server info bundle (contains lobby location)
+    fetch('/Xox')
+        .then(result => result.json())
+        .then(json => {
+            console.log(json);
+            // let lobbyLocation = json.associatedLobbyLocation;
+            // $('#lobby-button').click(function() {alert(lobbyLocation);});
+        })
+        .catch(error => {
+            // error handling here
+            console.log(error);
+        });
 }
 
 /**
@@ -86,16 +94,15 @@ function updateBar(gamestats, actions) {
     // if the game is still running, display who's turn it is (not your turn if actions object is empty)
     else {
 
-        if(Object.keys(actions).length == 0)
-            statusbar.innerHTML = 'It\'s '+capitalizeFirstLetter(getOtherPlayerName(gamestats))+'\'s turn.';
+        if (Object.keys(actions).length == 0)
+            statusbar.innerHTML = 'It\'s ' + capitalizeFirstLetter(getOtherPlayerName(gamestats)) + '\'s turn.';
         else
-            statusbar.innerHTML = 'It\'s your turn, '+capitalizeFirstLetter(getUserName())+'!';
+            statusbar.innerHTML = 'It\'s your turn, ' + capitalizeFirstLetter(getUserName()) + '!';
     }
 }
 
-function getOtherPlayerName(gamestats)
-{
-    if(gamestats.playersDescending[0].name === getUserName())
+function getOtherPlayerName(gamestats) {
+    if (gamestats.playersDescending[0].name === getUserName())
         return gamestats.playersDescending[1].name;
     return gamestats.playersDescending[0].name;
 }
