@@ -183,10 +183,6 @@ public class XoxRestController implements GameRestController {
                     throw new LogicException("Received token does not match player of to accessed resource.");
             }
 
-            // Verify the provided player is a participant of the game
-            if (!isPlayer(gameId, player))
-                throw new LogicException("Action bundle can not be created. The provided player is not a participant of the referenced game.");
-
             // Looks good, build the actions array, serialize it and send it back in a 200 (OK) Http response.
             XoxGame xoxGame = gameManager.getGameById(gameId);
             PlayerReadOnly playerObject = xoxGame.getPlayerByName(player);

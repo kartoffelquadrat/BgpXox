@@ -131,20 +131,31 @@ function associateActions() {
 
     // update local actions object, reassign handlers.
     fetch('/Xox/api/games/' + getGameId() + '/players/' + getUserName() + '/actions?access_token=' + 'foo')
-        .then(result => result.json())
-        .then(json => {
-            if (json.error) // assumes that the server is nice enough to send an error message
-                throw Error(json.error);
-            else {
-                // associate new click handler to every referenced cell (entries in json that encodes action map)
-                $.each(json, function (actionhash, action) {
-                    bindActionHashToCellClick(action.y, action.x, action.player.name, actionhash);
-                });
+        .then(result => {
+            if (result.ok) {
+                result.json()
+                    .then(json => {
+                        if (json.error) // assumes that the server is nice enough to send an error message
+                            throw Error(json.error);
+                        else {
+                            // associate new click handler to every referenced cell (entries in json that encodes action map)
+                            $.each(json, function (actionhash, action) {
+                                bindActionHashToCellClick(action.y, action.x, action.player.name, actionhash);
+                            });
 
-                // also update status fields (json is actions object)
-                getGameStatusAndUpdateBar(json);
-            }
+                            // also update status fields (json is actions object)
+                            getGameStatusAndUpdateBar(json);
+                        }
+                    })
+                    // server replied with a 200, but we are unable to parse json - probably obsolete.
+                    .catch(error => {
+                        alert('Error: ' + error.toString());
+                    });
+            } else
+                // the server replied, but with a non 200 (so there is no json to parse, just text.)
+                result.text().then(text => alert(text));
         })
+        // something went horribly wrong, we can't even get an error code from the server. (Probably obsolete)
         .catch(error => {
             alert('Error: ' + error.toString());
         });

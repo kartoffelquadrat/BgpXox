@@ -61,7 +61,9 @@ public class XoxActionGenerator implements ActionGenerator {
 
     /**
      * @param game   as the game instance for which the
-     * @param player as the player object defining the participant for why tha action bundle shall be created.
+     * @param player as the player object defining the participant for why tha action bundle shall be created. Can be
+     *               null, if en empty actions set must be generated for an observer who does not actively participate
+     *               in the game.
      * @return
      */
     @Override
@@ -72,9 +74,9 @@ public class XoxActionGenerator implements ActionGenerator {
             throw new LogicException("Xox Action Generator can only handle Xox games.");
         XoxGame xoxGame = (XoxGame) game;
 
-        // Verify that the provided player is a game participant
-        if (!isParticipant(xoxGame, player))
-            throw new LogicException("Actions can no be generated for player " + player.getName() + ". Is not a participant of the game.");
+        // Non participants (observers) always receive an empty action bundle.
+        if (player == null || !isParticipant(xoxGame, player))
+            return new LinkedHashMap<>();
 
         // If the game is already over, return an empty set
         if (xoxGame.isFinished())

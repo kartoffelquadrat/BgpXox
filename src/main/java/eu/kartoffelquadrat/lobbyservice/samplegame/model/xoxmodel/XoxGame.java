@@ -46,8 +46,7 @@ public class XoxGame implements Game {
             if (player.getName().equals(name))
                 return player;
         }
-        throw new ModelAccessException("Player object resolving requested, but the provided name is not associated to" +
-                " the game.");
+        return null;
     }
 
     @Override
