@@ -37,7 +37,7 @@ function associateLobbyButton() {
             // Note: The lobbyLocation variable is the registered server-internal lobby location. It is not necessarily directly exposed to the client.
             // In an intermediate step we therefore extract port and baseurl of the lobby and attach it to the IP (or domain) location of the current site.
             let lobbyRelativeLocation = lobbyInternalLocation.split(':')[2];
-            let lobbyAbsoluteLocation = "http:" + window.location.href.split(':')[1] + ":" + lobbyRelativeLocation;
+            let lobbyAbsoluteLocation = "http:" + window.location.href.split(':')[1] + ":" + lobbyRelativeLocation + 'lobby.html';
 
             // forward to associated lobby location on button click.
             $('#lobby-button').click(function () {
