@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -9,28 +9,58 @@
     <script type="text/javascript" th:src="@{/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/cookieutils.js}"></script>
     <script type="text/javascript" th:src="@{/xox.js}"></script>
+    <script type="text/javascript" th:src="@{/navbar.js}"></script>
     <script type="text/javascript" th:src="@{/md5.js}"></script>
     <script type="text/javascript" th:src="@{/asyncGet.js}"></script>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.3/css/bootstrap.min.css} "/>
     <title>Xox</title>
 </head>
-<body onload="verifyGameExists();associateLobbyButton();">
-<div id='xox-container' class="container">
-    <h1 class="title">X<span>O</span>X</h1>
-    <div class="status-div">
-        <div class="status-text" id="status-bar"></div>
-    </div>
-    <div class="game-grid">
-        <div id='00' class="game-cell"></div>
-        <div id='10' class="game-cell"></div>
-        <div id='20' class="game-cell"></div>
-        <div id='01' class="game-cell"></div>
-        <div id='11' class="game-cell"></div>
-        <div id='21' class="game-cell"></div>
-        <div id='02' class="game-cell"></div>
-        <div id='12' class="game-cell"></div>
-        <div id='22' class="game-cell"></div>
+<body onload="verifyGameExists();associateLobbyButton();setupNavbar();">
+<div id=RowDivWithBackground class="container fill bg-white">
+
+    <!--dynamic load would be better than static copies over different html files. But it causes issues with the handler mapping (order messed up / unreliable.)-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="navbar  w-100 order-3">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <button id="lobby-button" type="button" class="btn btn-outline-primary">
+                        Back to Lobby
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-stars" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M2.242 2.194a.27.27 0 0 1 .516 0l.162.53c.035.115.14.194.258.194h.551c.259 0 .37.333.164.493l-.468.363a.277.277 0 0 0-.094.3l.173.569c.078.256-.213.462-.423.3l-.417-.324a.267.267 0 0 0-.328 0l-.417.323c-.21.163-.5-.043-.423-.299l.173-.57a.277.277 0 0 0-.094-.299l-.468-.363c-.206-.16-.095-.493.164-.493h.55a.271.271 0 0 0 .259-.194l.162-.53zm0 4a.27.27 0 0 1 .516 0l.162.53c.035.115.14.194.258.194h.551c.259 0 .37.333.164.493l-.468.363a.277.277 0 0 0-.094.3l.173.569c.078.255-.213.462-.423.3l-.417-.324a.267.267 0 0 0-.328 0l-.417.323c-.21.163-.5-.043-.423-.299l.173-.57a.277.277 0 0 0-.094-.299l-.468-.363c-.206-.16-.095-.493.164-.493h.55a.271.271 0 0 0 .259-.194l.162-.53zm0 4a.27.27 0 0 1 .516 0l.162.53c.035.115.14.194.258.194h.551c.259 0 .37.333.164.493l-.468.363a.277.277 0 0 0-.094.3l.173.569c.078.255-.213.462-.423.3l-.417-.324a.267.267 0 0 0-.328 0l-.417.323c-.21.163-.5-.043-.423-.299l.173-.57a.277.277 0 0 0-.094-.299l-.468-.363c-.206-.16-.095-.493.164-.493h.55a.271.271 0 0 0 .259-.194l.162-.53z"/>
+                        </svg>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!--    white overlay, perfect responsiveness-->
+    <div class=fillinner>
+
+        <!--actual Xox page starts here-->
+        <br/>
+
+        <div id='xox-container' class="container">
+            <h1 class="title">X<span>O</span>X</h1>
+            <div class="status-div">
+                <div class="status-text" id="status-bar"></div>
+            </div>
+            <div class="game-grid">
+                <div id='00' class="game-cell"></div>
+                <div id='10' class="game-cell"></div>
+                <div id='20' class="game-cell"></div>
+                <div id='01' class="game-cell"></div>
+                <div id='11' class="game-cell"></div>
+                <div id='21' class="game-cell"></div>
+                <div id='02' class="game-cell"></div>
+                <div id='12' class="game-cell"></div>
+                <div id='22' class="game-cell"></div>
+            </div>
+        </div>
+
     </div>
 </div>
-<span><button id="lobby-button" type="button" class="btn btn-secondary">Lobby</button></span>
 </body>
 </html>
