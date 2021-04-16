@@ -1,6 +1,6 @@
 # Xox
 
-A [Lobby-Service](https://github.com/kartoffelquadrat/LobbyService) compatible implementation of *Tic Tac Toe*.
+A [BoardGamePlatform](https://github.com/kartoffelquadrat/BoardGamePlatform) compatible implementation of *Tic Tac Toe*.
 
 ## About
 
