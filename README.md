@@ -2,6 +2,8 @@
 
 A [BoardGamePlatform](https://github.com/kartoffelquadrat/BoardGamePlatform) compatible implementation of *Tic Tac Toe*.
 
+![preview](markdown/xox-screencapture.png)
+
 ## About
 
 This repository contains the sources of an inofficial LobbyService demo Game.  
