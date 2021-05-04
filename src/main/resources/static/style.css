@@ -85,10 +85,11 @@ body {
 
 #xox-container {
     background: #14BDAC;
-    /*margin: 50px;*/
+    width: 65%;
+    margin: 0 auto;
 
     /*// seems like the padding would have to adapt to the surrounding container width...*/
-    padding: 75px;
+    padding: 10px;
     border-radius: 25px;
 }
 
@@ -160,13 +161,13 @@ body {
 
 .x::after {
     content: '×';
-    font-size: 200px;
+    font-size: 100px;
 }
 
 .o::after {
     content: '○';
     color: #F2EBD3;
-    font-size: 225px;
+    font-size: 100px;
 }
 
 .won::after {
