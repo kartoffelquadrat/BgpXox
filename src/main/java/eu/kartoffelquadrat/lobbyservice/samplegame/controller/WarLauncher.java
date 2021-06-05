@@ -1,6 +1,5 @@
 /**
- * Modified WAR launcher of the samplegame.
- * Launch this program with: "mvn spring-boot:run"
+ * Modified WAR launcher of the samplegame. Launch this program with: "mvn spring-boot:run"
  * <p>
  * Access to the UI is granted by the LobbyService WebUI through redirect.
  *
@@ -26,15 +25,15 @@ public class WarLauncher extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
 
-        Logger logger = LoggerFactory.getLogger(WarLauncher.class);
-        logger.info("Xox launching...");
-
-        // Redirect stdout / stderr to logger, so the application container shows traces
-        StdOutErrLog.tieSystemOutAndErrToLog();
-
         // Power up Xox API backend
         ConfigurableApplicationContext applicationContext = SpringApplication.run(Launcher.class, args);
         Registrator registrator = applicationContext.getBean(Registrator.class);
+
+        // Redirect stdout / stderr to logger, so the application container shows traces. Has to occur after
+        // application context has been created.
+        StdOutErrLog.tieSystemOutAndErrToLog();
+        Logger logger = LoggerFactory.getLogger(WarLauncher.class);
+        logger.info("Xox application context created. Contacting Lobby-Service...");
 
         // Register Xox at LS-GameRegistry
         try {
