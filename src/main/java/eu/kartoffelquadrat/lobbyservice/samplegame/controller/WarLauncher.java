@@ -23,6 +23,9 @@ public class WarLauncher extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
 
+        // Redirect stdout / stderr to logger, so the application container shows traces
+        StdOutErrLog.tieSystemOutAndErrToLog();
+
         // Power up Xox API backend
         ConfigurableApplicationContext applicationContext = SpringApplication.run(Launcher.class, args);
         Registrator registrator = applicationContext.getBean(Registrator.class);
