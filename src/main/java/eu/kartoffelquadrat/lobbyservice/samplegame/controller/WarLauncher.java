@@ -1,5 +1,6 @@
 /**
- * Launch this program with: "mvn spring-boot:run -Pdev"
+ * Modified WAR launcher of the samplegame.
+ * Launch this program with: "mvn spring-boot:run"
  * <p>
  * Access to the UI is granted by the LobbyService WebUI through redirect.
  *
@@ -11,13 +12,14 @@ package eu.kartoffelquadrat.lobbyservice.samplegame.controller;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This class powers up Spring and ensures the annotated controllers are detected.
  */
 @SpringBootApplication(scanBasePackages = {"eu.kartoffelquadrat.lobbyservice.samplegame"})
-public class Launcher {
+public class WarLauncher extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
 
@@ -33,4 +35,3 @@ public class Launcher {
         }
     }
 }
-

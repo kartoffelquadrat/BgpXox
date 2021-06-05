@@ -7,7 +7,7 @@
     <groupId>eu.kartoffelquadrat</groupId>
     <artifactId>lobbyservice.samplegameservice</artifactId>
     <version>1.0.0.</version>
-    <packaging>jar</packaging>
+    <packaging>${packaging.type}</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -104,7 +104,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <mainClass>eu.kartoffelquadrat.lobbyservice.samplegame.controller.Launcher</mainClass>
+                    <mainClass>${xox.launcher}</mainClass>
                 </configuration>
                 <executions>
                     <execution>
@@ -121,11 +121,10 @@
         <!--dev profile is intended for native deployment of Xox.-->
         <profile>
             <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <activatedProperties>dev</activatedProperties>
+                <packaging.type>jar</packaging.type>
+                <xox.launcher>eu.kartoffelquadrat.lobbyservice.samplegame.controller.Launcher</xox.launcher>
             </properties>
         </profile>
         <!--dev profile is intended for native deployment of Xox, with no calls to other services on startup-->
@@ -133,6 +132,8 @@
             <id>uidev</id>
             <properties>
                 <activatedProperties>uidev</activatedProperties>
+                <packaging.type>jar</packaging.type>
+                <xox.launcher>eu.kartoffelquadrat.lobbyservice.samplegame.controller.Launcher</xox.launcher>
             </properties>
         </profile>
         <!--prod profile is intended for dockerized deployment of Xox.-->
@@ -140,7 +141,29 @@
             <id>prod</id>
             <properties>
                 <activatedProperties>prod</activatedProperties>
+                <packaging.type>jar</packaging.type>
+                <xox.launcher>eu.kartoffelquadrat.lobbyservice.samplegame.controller.Launcher</xox.launcher>
             </properties>
+        </profile>
+        <!--war profile is intended for webapp deployment of in an existing webserver.-->
+        <profile>
+            <id>war</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <activatedProperties>war</activatedProperties>
+                <packaging.type>war</packaging.type>
+                <xox.launcher>eu.kartoffelquadrat.lobbyservice.samplegame.controller.WarLauncher</xox.launcher>
+            </properties>
+            <dependencies>
+                <!-- Build to WAR has extra tomcat dependency-->
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
