@@ -14,6 +14,8 @@ import eu.kartoffelquadrat.lobbyservice.samplegame.model.GameManager;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.ModelAccessException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.PlayerReadOnly;
 import eu.kartoffelquadrat.lobbyservice.samplegame.model.xoxmodel.XoxGame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -53,6 +55,8 @@ public class XoxRestController implements GameRestController {
     @Autowired
     private Registrator registrator;
 
+    private final Logger logger;
+
 
     public XoxRestController(
             @Autowired ActionGenerator actionGenerator, GameManager<XoxGame> gameManager, TokenResolver tokenResolver, ActionInterpreter actionInterpreter,
@@ -65,6 +69,8 @@ public class XoxRestController implements GameRestController {
 
         broadcastContentManagers = new LinkedHashMap<>();
         this.longPollTimeout = longPollTimeout;
+
+        logger = LoggerFactory.getLogger(XoxRestController.class);
     }
 
     /**
@@ -72,6 +78,7 @@ public class XoxRestController implements GameRestController {
      */
     @GetMapping("/online")
     public String getOnlineFlag() {
+        logger.info("Online echo contacted.");
         return "Xox is happily running.";
     }
 

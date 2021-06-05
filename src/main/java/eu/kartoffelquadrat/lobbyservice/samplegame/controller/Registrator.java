@@ -8,6 +8,9 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.GameServerParameters;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.GameServiceRegistrationDetails;
+import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.XoxRestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -41,6 +44,8 @@ public class Registrator {
     @Value("${debug.skip.registration}")
     private boolean skipLobbyServiceCallbacks;
 
+    private final Logger logger;
+
     @Autowired
     Registrator(@Value("${gameservice.name}")
                         String gameServiceName,
@@ -51,6 +56,8 @@ public class Registrator {
         this.gameServiceLocation = gameServiceLocation;
         this.gameServicePort = gameServicePort;
         registrationParameters = new GameServerParameters(gameServiceName, gameServiceLocation + ":" + gameServicePort + "/" + gameServiceName, 2, 2, "true");
+
+        logger = LoggerFactory.getLogger(Registrator.class);
     }
 
     /**
@@ -63,7 +70,7 @@ public class Registrator {
     private String getToken() throws UnirestException {
 
         if (skipLobbyServiceCallbacks) {
-            System.out.println("***WARNING*** Token retrieval skipped.");
+            logger.warn("Token retrieval skipped.");
             return "DUMMY";
         }
 
@@ -82,6 +89,7 @@ public class Registrator {
         // Extract token of response JSON, escape potential special characters
         JsonObject responseJson = new JsonParser().parse(response.getBody()).getAsJsonObject();
         String token = responseJson.get("access_token").toString().replaceAll("\"", "");
+        logger.info("Retrieved xox oauth2 token: "+ token);
         return token;
     }
 
@@ -95,7 +103,7 @@ public class Registrator {
     public void registerAtLobbyService() throws UnirestException {
 
         if (skipLobbyServiceCallbacks) {
-            System.out.println("***WARNING*** Registration skipped.");
+            logger.warn("Registration skipped.");
             return;
         }
 
@@ -112,10 +120,11 @@ public class Registrator {
                 .asString();
 
         // Verify the registration was accepted
-        if (response.getStatus() != 200)
+        if (response.getStatus() != 200) {
+            logger.error("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
             throw new RuntimeException("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
-
-        throw new RuntimeException("Everything ok: "+response);
+        }
+        logger.info("Succesfully registered at LobbyService.");
     }
 
     /**

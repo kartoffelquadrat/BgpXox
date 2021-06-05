@@ -9,8 +9,6 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -28,12 +26,6 @@ public class WarLauncher extends SpringBootServletInitializer {
         // Power up Xox API backend
         ConfigurableApplicationContext applicationContext = SpringApplication.run(Launcher.class, args);
         Registrator registrator = applicationContext.getBean(Registrator.class);
-
-        // Redirect stdout / stderr to logger, so the application container shows traces. Has to occur after
-        // application context has been created.
-        StdOutErrLog.tieSystemOutAndErrToLog();
-        Logger logger = LoggerFactory.getLogger(WarLauncher.class);
-        logger.info("Xox application context created. Contacting Lobby-Service...");
 
         // Register Xox at LS-GameRegistry
         try {
