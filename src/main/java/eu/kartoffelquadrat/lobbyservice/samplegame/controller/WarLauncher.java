@@ -14,6 +14,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.apache.log4j.Logger;
+
 
 /**
  * This class powers up Spring and ensures the annotated controllers are detected.
@@ -22,6 +24,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class WarLauncher extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
+
+        Logger.getLogger(WarLauncher.class).info("Starting up Xox...");
 
         // Redirect stdout / stderr to logger, so the application container shows traces
         StdOutErrLog.tieSystemOutAndErrToLog();
