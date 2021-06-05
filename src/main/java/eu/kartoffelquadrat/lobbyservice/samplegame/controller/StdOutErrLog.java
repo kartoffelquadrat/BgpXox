@@ -1,8 +1,11 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.controller;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.PrintStream;
-import org.apache.log4j.Logger;
+
 /**
  * Custom redirect of standard out / error stream to logger.
  * See: https://stackoverflow.com/a/1370033
@@ -11,7 +14,7 @@ import org.apache.log4j.Logger;
  */
 public class StdOutErrLog {
 
-    private static final Logger logger = Logger.getLogger(StdOutErrLog.class);
+    private static final Logger logger = LoggerFactory.getLogger(StdOutErrLog.class);
 
     public static void tieSystemOutAndErrToLog() {
         System.setOut(createLoggingProxy(System.out));
