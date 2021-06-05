@@ -113,7 +113,9 @@ public class Registrator {
 
         // Verify the registration was accepted
         if (response.getStatus() != 200)
-            System.out.println("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+            throw new RuntimeException("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+
+        throw new RuntimeException("Everything ok: "+response);
     }
 
     /**
