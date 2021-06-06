@@ -29,7 +29,7 @@ function getGameId() {
 function associateLobbyButton() {
 
     // get static server info bundle (contains lobby location)
-    fetch('/Xox')
+    fetch('/xox')
         .then(result => result.json())
         .then(json => {
             let lobbyInternalLocation = json.associatedLobbyLocation;
@@ -66,7 +66,7 @@ function xoxBoardUpdate(board) {
 }
 
 function getGameStatusAndUpdateBar(actions) {
-    // => access stats object: http://127.0.0.1:4244/Xox/api/games/12345
+    // => access stats object: http://127.0.0.1:4244/xox/api/games/12345
     fetch('/xox/api/games/' + getGameId())
         .then(result => result.json())
         .then(json => {
