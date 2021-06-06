@@ -49,7 +49,7 @@ public class Registrator {
                         String gameServicePort) {
         this.gameServiceLocation = gameServiceLocation;
         this.gameServicePort = gameServicePort;
-        registrationParameters = new GameServerParameters(gameServiceName, gameServiceLocation + ":" + gameServicePort + "/" + gameServiceName, 2, 2, "true");
+        registrationParameters = new GameServerParameters(gameServiceName, gameServiceLocation, 2, 2, "true");
 
         logger = LoggerFactory.getLogger(Registrator.class);
     }
