@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Util class that handles the registration / un-registration of a game-service based on the parameters provided in
  * application.properties. Configurable annotation allows injection of primitives form application.properties as class
@@ -26,25 +28,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class Registrator {
 
+    private final Logger logger;
     @Autowired
     private GameServiceRegistrationDetails lobbyServiceLocation;
-
     private String gameServiceLocation;
-
     private String gameServicePort;
-
     @Value("${oauth2.name}")
     private String serviceOauthName;
-
     @Value("${oauth2.password}")
     private String serviceOauthPassword;
-
     private GameServerParameters registrationParameters;
-
     @Value("${debug.skip.registration}")
     private boolean skipLobbyServiceCallbacks;
-
-    private final Logger logger;
 
     @Autowired
     Registrator(@Value("${gameservice.name}")
@@ -59,6 +54,22 @@ public class Registrator {
 
         logger = LoggerFactory.getLogger(Registrator.class);
     }
+
+    /**
+     * This method is implicitly clatted by spring upon creation of the registrator bean. It ensures this game service
+     * contacts the lobby service to register as available game server.
+     */
+    @PostConstruct
+    private void init() {
+        try {
+            registerAtLobbyService();
+        } catch (UnirestException ue) {
+            String errorMessage = "LobbyService not reachable at provided location.";
+            logger.error(errorMessage);
+            throw new RuntimeException(errorMessage);
+        }
+    }
+
 
     /**
      * Retrieves an OAuth2 token that allows registration / unregistration of Xox as a new GameService at the LS.
@@ -89,7 +100,7 @@ public class Registrator {
         // Extract token of response JSON, escape potential special characters
         JsonObject responseJson = new JsonParser().parse(response.getBody()).getAsJsonObject();
         String token = responseJson.get("access_token").toString().replaceAll("\"", "");
-        logger.info("Retrieved xox oauth2 token: "+ token);
+        logger.info("Retrieved xox oauth2 token: " + token);
         return token;
     }
 
@@ -164,7 +175,7 @@ public class Registrator {
 
         // Build and send an authenticated game-over request to the LS API.
         HttpResponse<String> response = Unirest
-                .delete(lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/sessions/"+gameId)
+                .delete(lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/sessions/" + gameId)
                 .header("Authorization", "Bearer " + accessToken)
                 .asString();
 

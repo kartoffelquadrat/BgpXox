@@ -89,7 +89,7 @@
 
     <build>
         <!-- Override default name of generated jars -->
-        <finalName>Xox</finalName>
+        <finalName>xox</finalName>
 
         <plugins>
             <!-- enforce passing junit tests as build precondition -->
@@ -104,7 +104,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <mainClass>${xox.launcher}</mainClass>
+                    <mainClass>eu.kartoffelquadrat.lobbyservice.samplegame.controller.Launcher</mainClass>
                 </configuration>
                 <executions>
                     <execution>
@@ -124,7 +124,6 @@
             <properties>
                 <activatedProperties>dev</activatedProperties>
                 <packaging.type>jar</packaging.type>
-                <xox.launcher>eu.kartoffelquadrat.lobbyservice.samplegame.controller.Launcher</xox.launcher>
             </properties>
         </profile>
         <!--dev profile is intended for native deployment of Xox, with no calls to other services on startup-->
@@ -133,7 +132,6 @@
             <properties>
                 <activatedProperties>uidev</activatedProperties>
                 <packaging.type>jar</packaging.type>
-                <xox.launcher>eu.kartoffelquadrat.lobbyservice.samplegame.controller.Launcher</xox.launcher>
             </properties>
         </profile>
         <!--prod profile is intended for dockerized deployment of Xox.-->
@@ -142,7 +140,6 @@
             <properties>
                 <activatedProperties>prod</activatedProperties>
                 <packaging.type>jar</packaging.type>
-                <xox.launcher>eu.kartoffelquadrat.lobbyservice.samplegame.controller.Launcher</xox.launcher>
             </properties>
         </profile>
         <!--war profile is intended for webapp deployment of in an existing webserver.-->
@@ -154,7 +151,6 @@
             <properties>
                 <activatedProperties>war</activatedProperties>
                 <packaging.type>war</packaging.type>
-                <xox.launcher>eu.kartoffelquadrat.lobbyservice.samplegame.controller.WarLauncher</xox.launcher>
             </properties>
             <dependencies>
                 <!-- Build to WAR has extra tomcat dependency-->
