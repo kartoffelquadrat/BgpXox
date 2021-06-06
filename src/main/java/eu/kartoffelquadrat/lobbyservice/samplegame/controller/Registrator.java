@@ -8,7 +8,6 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.GameServerParameters;
 import eu.kartoffelquadrat.lobbyservice.samplegame.controller.communcationbeans.GameServiceRegistrationDetails;
-import eu.kartoffelquadrat.lobbyservice.samplegame.controller.xoxlogic.XoxRestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +60,7 @@ public class Registrator {
      */
     @PostConstruct
     private void init() {
+        logger.info("Inferred registration location: "+registrationParameters.getLocation());
         try {
             registerAtLobbyService();
         } catch (UnirestException ue) {
