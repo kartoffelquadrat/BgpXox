@@ -55,7 +55,7 @@ public class Registrator {
     }
 
     /**
-     * This method is implicitly clatted by spring upon creation of the registrator bean. It ensures this game service
+     * This method is implicitly called by spring upon creation of the Registrator bean. It ensures this game service
      * contacts the lobby service to register as available game server.
      */
     @PostConstruct

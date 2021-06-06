@@ -1,13 +1,13 @@
 function verifyGameExists() {
 
-    fetch('/Xox/api/games/' + getGameId())
+    fetch('/xox/api/games/' + getGameId())
         .then(result => result.json())
         .then(json => {
             if (json.error) // assumes that the server is nice enough to send an error message
                 throw Error(json.error);
             else
                 // ARL-long poll on "board"-resource that causes re-rendering whenever the board changed.
-                observeResource('/Xox/api/games/' + getGameId() + '/board?hash=', xoxBoardUpdate, markOffline, "");
+                observeResource('/xox/api/games/' + getGameId() + '/board?hash=', xoxBoardUpdate, markOffline, "");
         })
         .catch(error => {
             // Seems like the game does not exist:
@@ -67,7 +67,7 @@ function xoxBoardUpdate(board) {
 
 function getGameStatusAndUpdateBar(actions) {
     // => access stats object: http://127.0.0.1:4244/Xox/api/games/12345
-    fetch('/Xox/api/games/' + getGameId())
+    fetch('/xox/api/games/' + getGameId())
         .then(result => result.json())
         .then(json => {
             if (json.error) // assumes that the server is nice enough to send an error message
@@ -130,7 +130,7 @@ function associateActions() {
     });
 
     // update local actions object, reassign handlers.
-    fetch('/Xox/api/games/' + getGameId() + '/players/' + getUserName() + '/actions?access_token=' + 'foo')
+    fetch('/xox/api/games/' + getGameId() + '/players/' + getUserName() + '/actions?access_token=' + 'foo')
         .then(result => {
             if (result.ok) {
                 result.json()
@@ -175,9 +175,9 @@ function bindActionHashToCellClick(x, y, player, hash) {
  */
 function playAction(player, hash) {
 
-    // Send a post request to /Xox/api/games/{gameid}/players/{player}/actions/{action}
+    // Send a post request to /xox/api/games/{gameid}/players/{player}/actions/{action}
     // Add access_token as request parameter to authenticate
-    fetch('/Xox/api/games/' + getGameId() + '/players/' + player + '/actions/' + hash + '?access_token=' + 'foo', {
+    fetch('/xox/api/games/' + getGameId() + '/players/' + player + '/actions/' + hash + '?access_token=' + 'foo', {
         method: 'post'
     })
         .then(reply => {
