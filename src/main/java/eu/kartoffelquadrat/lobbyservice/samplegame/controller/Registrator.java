@@ -64,7 +64,7 @@ public class Registrator {
         try {
             registerAtLobbyService();
         } catch (UnirestException ue) {
-            String errorMessage = "LobbyService not reachable at provided location.";
+            String errorMessage = "LobbyService not reachable at provided location: "+lobbyServiceLocation;
             logger.error(errorMessage);
             throw new RuntimeException(errorMessage);
         }
@@ -85,18 +85,23 @@ public class Registrator {
             return "DUMMY";
         }
 
+        String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/oauth/token";
+        logger.info("Obtaining OAuth2 token using URL: "+lobbyServiceUrl);
+
         String bodyString = "grant_type=password&username=" + serviceOauthName + "&password=" + serviceOauthPassword;
         HttpResponse<String> response = Unirest
-                .post(lobbyServiceLocation.getAssociatedLobbyLocation() + "/oauth/token")
+                .post(lobbyServiceUrl)
                 // Authorization parameter is the base64 encoded string: "bgp-client-name:bgp-client-pw".
                 // Can remain unchanged for future games.
                 .header("Authorization", "Basic YmdwLWNsaWVudC1uYW1lOmJncC1jbGllbnQtcHc=")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(bodyString)
                 .asString();
-        if (response.getStatus() != 200)
-            throw new RuntimeException("LS rejected Xox credentials. Make sure the \"xox\" user exists!");
-
+        if (response.getStatus() != 200) {
+            String noTokenError = "LS rejected Xox credentials. Make sure the \"xox\" user exists!";
+            logger.error(noTokenError);
+            throw new RuntimeException(noTokenError);
+        }
         // Extract token of response JSON, escape potential special characters
         JsonObject responseJson = new JsonParser().parse(response.getBody()).getAsJsonObject();
         String token = responseJson.get("access_token").toString().replaceAll("\"", "");
@@ -121,10 +126,13 @@ public class Registrator {
         // Get a valid access token, to authenticate for the registration.
         String accessToken = getToken();
 
+        String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/Xox";
+        logger.info("Registering using URL: "+lobbyServiceUrl);
+
         // Build and send an authenticated registration request to the LS API.
         String bodyJson = new Gson().toJson(registrationParameters);
         HttpResponse<String> response = Unirest
-                .put(lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/Xox")
+                .put(lobbyServiceUrl)
                 .header("Authorization", "Bearer " + accessToken)
                 .header("Content-Type", "application/json")
                 .body(bodyJson)
@@ -145,43 +153,50 @@ public class Registrator {
     public void unregisterAtLobbyService() throws UnirestException {
 
         if (skipLobbyServiceCallbacks) {
-            System.out.println("***WARNING*** Unregistration skipped.");
+            logger.warn("Unregistration skipped.");
             return;
         }
 
         // Get a valid access token, to authenticate for the un-registration.
         String accessToken = getToken();
 
+        String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/Xox";
+        logger.info("Unregistering using URL: "+lobbyServiceUrl);
+
         // Build and send an authenticated un-registration request to the LS API.
         HttpResponse<String> response = Unirest
-                .delete(lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/Xox")
+                .delete(lobbyServiceUrl)
                 .header("Authorization", "Bearer " + accessToken)
                 .asString();
 
         // Verify the registration was accepted
         if (response.getStatus() != 200)
-            System.out.println("LobbyService rejected unregistration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+            logger.error("LobbyService rejected unregistration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
     }
 
     // ToDo: Add method to notify LS about an ended game.
     public void notifyGameOver(long gameId) throws UnirestException {
         if (skipLobbyServiceCallbacks) {
-            System.out.println("***WARNING*** Notify game-over skipped.");
+            logger.warn("Notify game-over skipped.");
             return;
         }
 
         // Get a valid access token, to authenticate for the un-registration.
         String accessToken = getToken();
 
+        String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/sessions/" + gameId;
+        logger.info("Notifying LS about gameover using URL: "+lobbyServiceUrl);
+
+
         // Build and send an authenticated game-over request to the LS API.
         HttpResponse<String> response = Unirest
-                .delete(lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/sessions/" + gameId)
+                .delete(lobbyServiceUrl)
                 .header("Authorization", "Bearer " + accessToken)
                 .asString();
 
         // Verify the registration was accepted
         if (response.getStatus() != 200)
-            System.out.println("LobbyService rejected Game-Over notification of Xox session. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+            logger.error("LobbyService rejected Game-Over notification of Xox session. Server replied:\n" + response.getStatus() + " - " + response.getBody());
 
     }
 }
