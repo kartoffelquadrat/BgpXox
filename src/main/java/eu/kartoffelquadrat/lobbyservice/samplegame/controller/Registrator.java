@@ -59,15 +59,9 @@ public class Registrator {
      * contacts the lobby service to register as available game server.
      */
     @PostConstruct
-    private void init() {
-        logger.info("Inferred registration location: "+registrationParameters.getLocation());
-        try {
-            registerAtLobbyService();
-        } catch (UnirestException ue) {
-            String errorMessage = "LobbyService not reachable at provided location: "+lobbyServiceLocation;
-            logger.error(errorMessage);
-            throw new RuntimeException(errorMessage);
-        }
+    private void init() throws InterruptedException {
+        logger.info("Inferred registration location: " + registrationParameters.getLocation());
+        registerAtLobbyService(true);
     }
 
 
@@ -86,7 +80,7 @@ public class Registrator {
         }
 
         String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/oauth/token";
-        logger.info("Obtaining OAuth2 token using URL: "+lobbyServiceUrl);
+        logger.info("Obtaining OAuth2 token using URL: " + lobbyServiceUrl);
 
         String bodyString = "grant_type=password&username=" + serviceOauthName + "&password=" + serviceOauthPassword;
         HttpResponse<String> response = Unirest
@@ -116,34 +110,54 @@ public class Registrator {
      * @throws UnirestException in case the communication with the LobbyService failed or the LobbyService rejected a
      *                          registration of Xox.
      */
-    public void registerAtLobbyService() throws UnirestException {
+    public void registerAtLobbyService(boolean retry) throws InterruptedException {
 
         if (skipLobbyServiceCallbacks) {
             logger.warn("Registration skipped.");
             return;
         }
 
-        // Get a valid access token, to authenticate for the registration.
-        String accessToken = getToken();
-
+        // Build full qualified lobbyservice location URL string.
         String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/Xox";
-        logger.info("Registering using URL: "+lobbyServiceUrl);
+        logger.info("Registering using URL: " + lobbyServiceUrl);
 
-        // Build and send an authenticated registration request to the LS API.
-        String bodyJson = new Gson().toJson(registrationParameters);
-        HttpResponse<String> response = Unirest
-                .put(lobbyServiceUrl)
-                .header("Authorization", "Bearer " + accessToken)
-                .header("Content-Type", "application/json")
-                .body(bodyJson)
-                .asString();
+        // try / catch block to allow for second connection attempt in case BGP not yet powered up.
+        try {
+            // Get a valid access token, to authenticate for the registration.
+            String accessToken = getToken();
 
-        // Verify the registration was accepted
-        if (response.getStatus() != 200) {
-            logger.error("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
-            throw new RuntimeException("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+
+            // Build and send an authenticated registration request to the LS API.
+            String bodyJson = new Gson().toJson(registrationParameters);
+            HttpResponse<String> response = Unirest
+                    .put(lobbyServiceUrl)
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Content-Type", "application/json")
+                    .body(bodyJson)
+                    .asString();
+
+            // Verify the registration was accepted
+            if (response.getStatus() != 200) {
+                logger.error("LobbyService ("+lobbyServiceUrl+") rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+                throw new RuntimeException("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+            }
+            logger.info("Succesfully registered at LobbyService.");
         }
-        logger.info("Succesfully registered at LobbyService.");
+
+        // In case of connection issues (and retry flag set) give it a second try in 30 seconds.
+        catch (UnirestException unirestException) {
+
+            if (retry) {
+                logger.info("First connection attempt to BGP not successful. Will retry one more time in 30 seconds.");
+                Thread.sleep(30 * 1000);
+                registerAtLobbyService(false);
+                return;
+            } else {
+                String errorMessage = "LobbyService not reachable at provided location: "+lobbyServiceUrl;
+                logger.error(errorMessage);
+                throw new RuntimeException(errorMessage);
+            }
+        }
     }
 
     /**
@@ -161,7 +175,7 @@ public class Registrator {
         String accessToken = getToken();
 
         String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/Xox";
-        logger.info("Unregistering using URL: "+lobbyServiceUrl);
+        logger.info("Unregistering using URL: " + lobbyServiceUrl);
 
         // Build and send an authenticated un-registration request to the LS API.
         HttpResponse<String> response = Unirest
@@ -185,7 +199,7 @@ public class Registrator {
         String accessToken = getToken();
 
         String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/sessions/" + gameId;
-        logger.info("Notifying LS about gameover using URL: "+lobbyServiceUrl);
+        logger.info("Notifying LS about gameover using URL: " + lobbyServiceUrl);
 
 
         // Build and send an authenticated game-over request to the LS API.
