@@ -39,6 +39,10 @@ public class Registrator {
     private GameServerParameters registrationParameters;
     @Value("${debug.skip.registration}")
     private boolean skipLobbyServiceCallbacks;
+    @Value("${registration.retry}")
+    private boolean registrationRetry;
+    @Value("${registration.retry.timer}")
+    private int registrationRetryTimerSeconds;
 
     @Autowired
     Registrator(@Value("${gameservice.name}")
@@ -61,7 +65,10 @@ public class Registrator {
     @PostConstruct
     private void init() throws InterruptedException {
         logger.info("Inferred registration location: " + registrationParameters.getLocation());
-        registerAtLobbyService(true);
+
+        // Actual registration procedure is started in extra thread, to avoid blocking deployment of queued
+        // applications this game might depend on.
+        new Thread(() -> safeRegisterAtLobbyService(registrationRetry)).start();
     }
 
 
@@ -107,8 +114,7 @@ public class Registrator {
      * Registers Xox as a Game-service at the LS game registry. Admin credentials are required to authorize this
      * operation.
      *
-     * @throws UnirestException in case the communication with the LobbyService failed or the LobbyService rejected a
-     *                          registration of Xox.
+     * @throws InterruptedException in case thread sleep failed for delayed retry.
      */
     public void registerAtLobbyService(boolean retry) throws InterruptedException {
 
@@ -138,7 +144,7 @@ public class Registrator {
 
             // Verify the registration was accepted
             if (response.getStatus() != 200) {
-                logger.error("LobbyService ("+lobbyServiceUrl+") rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+                logger.error("LobbyService (" + lobbyServiceUrl + ") rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
                 throw new RuntimeException("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
             }
             logger.info("Succesfully registered at LobbyService.");
@@ -148,15 +154,28 @@ public class Registrator {
         catch (UnirestException unirestException) {
 
             if (retry) {
-                logger.info("First connection attempt to BGP not successful. Will retry one more time in 30 seconds.");
-                Thread.sleep(30 * 1000);
+                logger.info("First connection attempt to BGP not successful. Will retry one more time in "+registrationRetryTimerSeconds+" seconds.");
+                Thread.sleep(registrationRetryTimerSeconds * 1000);
                 registerAtLobbyService(false);
                 return;
             } else {
-                String errorMessage = "LobbyService not reachable at provided location: "+lobbyServiceUrl;
+                String errorMessage = "LobbyService not reachable at provided location: " + lobbyServiceUrl;
                 logger.error(errorMessage);
                 throw new RuntimeException(errorMessage);
             }
+        }
+    }
+
+    /**
+     * Sleep safe wrapper for previous method. Allows usage in anonymous lambdas.
+     *
+     * @param retry to indicate whether registration should be reattempted after a predefined delay.
+     */
+    public void safeRegisterAtLobbyService(boolean retry) {
+        try {
+            registerAtLobbyService(retry);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Failed to await registration retry.");
         }
     }
 
