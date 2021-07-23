@@ -130,7 +130,7 @@ function associateActions() {
     });
 
     // update local actions object, reassign handlers.
-    fetch('/xox/api/games/' + getGameId() + '/players/' + getUserName() + '/actions?access_token=' + 'foo')
+    fetch('/xox/api/games/' + getGameId() + '/players/' + getUserName() + '/actions?access_token=' + getAccessToken())
         .then(result => {
             if (result.ok) {
                 result.json()
@@ -177,7 +177,7 @@ function playAction(player, hash) {
 
     // Send a post request to /xox/api/games/{gameid}/players/{player}/actions/{action}
     // Add access_token as request parameter to authenticate
-    fetch('/xox/api/games/' + getGameId() + '/players/' + player + '/actions/' + hash + '?access_token=' + 'foo', {
+    fetch('/xox/api/games/' + getGameId() + '/players/' + player + '/actions/' + hash + '?access_token=' + getAccessToken(), {
         method: 'post'
     })
         .then(reply => {

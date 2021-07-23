@@ -46,6 +46,7 @@ public class XoxRestController implements GameRestController {
     // Calling touch on the manager allows an unblocking of clients that long poll the board resource.
     private final Map<Long, BroadcastContentManager<Board>> broadcastContentManagers;
     private final long longPollTimeout;
+    private final Logger logger;
     @Autowired
     RankingGenerator rankingGenerator;
     @Autowired
@@ -54,8 +55,6 @@ public class XoxRestController implements GameRestController {
     private boolean skipTokenValidation;
     @Autowired
     private Registrator registrator;
-
-    private final Logger logger;
 
 
     public XoxRestController(
@@ -178,17 +177,8 @@ public class XoxRestController implements GameRestController {
             if (!gameManager.isExistentGameId(gameId))
                 throw new ModelAccessException("Can not retrieve players for game " + gameId + ". Not a valid game id.");
 
-            if (skipTokenValidation)
-                System.out.println("***WARNING*** Token verification skipped.");
-            else {
-                // Verify the provided token is a player token
-                if (tokenResolver.isPlayerToken(accessToken))
-                    throw new LogicException("Received token is an admin token but a player token is required.");
-
-                // Verify the provided token belongs to the specified player
-                if (tokenResolver.isMatchingPlayer(player, accessToken))
-                    throw new LogicException("Received token does not match player of to accessed resource.");
-            }
+            // Verify the resource access is authorized.
+            validateToken(player, accessToken);
 
             // Looks good, build the actions array, serialize it and send it back in a 200 (OK) Http response.
             XoxGame xoxGame = gameManager.getGameById(gameId);
@@ -211,17 +201,8 @@ public class XoxRestController implements GameRestController {
             if (!gameManager.isExistentGameId(gameId))
                 throw new ModelAccessException("Can not retrieve players for game " + gameId + ". Not a valid game id.");
 
-            if (skipTokenValidation)
-                System.out.println("***WARNING*** Token verification skipped.");
-            else {
-                // Verify the provided token is a player token
-                if (tokenResolver.isPlayerToken(accessToken))
-                    throw new LogicException("Received token is an admin token but a player token is required.");
-
-                // Verify the provided token belongs to the specified player
-                if (tokenResolver.isMatchingPlayer(player, accessToken))
-                    throw new LogicException("Received token does not match player of to accessed resource.");
-            }
+            // Verify the resource access is authorized.
+            validateToken(player, accessToken);
 
             // Verify the provided player is a participant of the game
             if (!isPlayer(gameId, player))
@@ -289,5 +270,28 @@ public class XoxRestController implements GameRestController {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * In case properties enable registration at the LobbyService as OAuth2 SSO calling this method has no effect if
+     * provided player name matches the token owner and the playes is a non admin. Otherwise a LogicException is
+     * thrown.
+     *
+     * @param playerName  as unique string of the player to match the token owner.
+     * @param accessToken as OAuth2 token string associated to a valid access_token.
+     * @throws LogicException if token does not belong to player or player is an admin.
+     */
+    private void validateToken(String playerName, String accessToken) throws LogicException {
+        if (skipTokenValidation)
+            System.out.println("***WARNING*** Token verification skipped.");
+        else {
+            // Verify the provided token belongs to the specified player
+            if (!tokenResolver.isMatchingPlayer(playerName, accessToken))
+                throw new LogicException("Received token does not match player of to accessed resource.");
+
+            // Verify the provided token is a player token
+            if (!tokenResolver.isPlayerToken(accessToken))
+                throw new LogicException("Received token is an admin token but a player token is required.");
+        }
     }
 }
