@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" th:href="@{/style.css}">
     <script type="text/javascript" th:src="@{/jquery.min.js}"></script>
-    <script type="text/javascript" th:src="@{/cookieutils.js}"></script>
+    <script type="text/javascript" th:src="@{/cookieTokenUtils.js}"></script>
     <script type="text/javascript" th:src="@{/xox.js}"></script>
     <script type="text/javascript" th:src="@{/navbar.js}"></script>
     <script type="text/javascript" th:src="@{/md5.js}"></script>
@@ -15,7 +15,7 @@
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.3/css/bootstrap.min.css} "/>
     <title>Xox</title>
 </head>
-<body onload="verifyGameExists();associateLobbyButton();setupNavbar();">
+<body onload="verifyGameExists();anonymousIntercept();timedTokenRenew();associateLobbyButton();setupNavbar();">
 <div id=RowDivWithBackground class="container fill bg-white">
 
     <!--dynamic load would be better than static copies over different html files. But it causes issues with the handler mapping (order messed up / unreliable.)-->
