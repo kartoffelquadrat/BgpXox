@@ -47,13 +47,15 @@ public class Registrator {
     @Autowired
     Registrator(@Value("${gameservice.name}")
                         String gameServiceName,
+                @Value("${gameservice.displayname}")
+                        String displayName,
                 @Value("${gameservice.location}")
                         String gameServiceLocation,
                 @Value("${server.port}")
                         String gameServicePort) {
         this.gameServiceLocation = gameServiceLocation;
         this.gameServicePort = gameServicePort;
-        registrationParameters = new GameServerParameters(gameServiceName, gameServiceLocation, 2, 2, "true");
+        registrationParameters = new GameServerParameters(gameServiceName, displayName, gameServiceLocation, 2, 2, "true");
 
         logger = LoggerFactory.getLogger(Registrator.class);
     }

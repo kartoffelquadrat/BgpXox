@@ -14,6 +14,9 @@ public class GameServerParameters {
     // Name of the gameServer to be registered. Will we converted to lowercase internally.
     private String name;
 
+    // Name of the game as it will be displayed to Lobby Service users. All characters can be used here, including whitespaces.
+    private String displayName;
+
     // Location of the server's base URL. If WebSupport is set to true, this URL must return the webclient of the
     // registered game. In any case the registered game must provide subresource, "games/{gameId}" with "PUT", for the
     // LS to launch the session on game-server side.
@@ -35,13 +38,15 @@ public class GameServerParameters {
     }
 
     /**
-     * @param name
+     * @param name as the unique name of this game that can be used by a lobby service instance as unique id.
+     * @param displayName as identifier how to display this service in a lobby service ui.
      * @param location
      * @param minSessionPlayers
      * @param maxSessionPlayers
      */
-    public GameServerParameters(String name, String location, int minSessionPlayers, int maxSessionPlayers, String webSupport) {
+    public GameServerParameters(String name, String displayName, String location, int minSessionPlayers, int maxSessionPlayers, String webSupport) {
         this.name = name;
+        this.displayName = displayName;
         this.location = location;
         this.minSessionPlayers = minSessionPlayers;
         this.maxSessionPlayers = maxSessionPlayers;
@@ -51,6 +56,11 @@ public class GameServerParameters {
 
     public String getName() {
         return name;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
     }
 
     public String getLocation() {
