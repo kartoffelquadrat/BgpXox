@@ -80,7 +80,8 @@ public class TokenResolver {
     }
 
     /**
-     * Helper method that returns true if a provided string can be resolved to a player role.
+     * Helper method that returns true if a provided string can be resolved to a player (or admin) role.
+     * (All admins are implicitly players, too)
      *
      * @param accessToken as the string encoded OAuth2 token.
      * @return true on successful resolve, false otherwise (belongs to admin or a connection error.)
@@ -88,7 +89,7 @@ public class TokenResolver {
     public boolean isPlayerToken(String accessToken) {
         try {
             String role = getOwnerRole(accessToken);
-            return role.toLowerCase().contains("player");
+            return role.toLowerCase().contains("player") || role.toLowerCase().contains("admin");
         } catch (UnirestException | LogicException e) {
             return false;
         }

@@ -126,7 +126,7 @@ public class Registrator {
         }
 
         // Build full qualified lobbyservice location URL string.
-        String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/Xox";
+        String lobbyServiceUrl = lobbyServiceLocation.getAssociatedLobbyLocation() + "/api/gameservices/"+registrationParameters.getName();
         logger.info("Registering using URL: " + lobbyServiceUrl);
 
         // try / catch block to allow for second connection attempt in case BGP not yet powered up.
@@ -146,8 +146,8 @@ public class Registrator {
 
             // Verify the registration was accepted
             if (response.getStatus() != 200) {
-                logger.error("LobbyService (" + lobbyServiceUrl + ") rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
-                throw new RuntimeException("LobbyService rejected registration of Xox. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+                logger.error("LobbyService (" + lobbyServiceUrl + ") rejected registration of Game. Server replied:\n" + response.getStatus() + " - " + response.getBody());
+                throw new RuntimeException("LobbyService rejected registration of Game. Server replied:\n" + response.getStatus() + " - " + response.getBody());
             }
             logger.info("Succesfully registered at LobbyService.");
         }
