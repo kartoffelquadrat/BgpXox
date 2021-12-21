@@ -70,7 +70,6 @@
             <version>3.11</version>
         </dependency>
 
-
         <!-- long polling support-->
         <dependency>
             <groupId>eu.kartoffelquadrat</groupId>

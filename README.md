@@ -28,7 +28,7 @@ The game's resource layout consists of two branches:
  
 ### Deployment
 
-This game requires a deployed instance of the [Lobby-Service](https://github.com/kartoffelquadrat/LobbyService), with enabled [Lobby-Servive Web Interface](https://github.com/kartoffelquadrat/LobbyServiceWebInterface/) to run.
+This game requires a deployed instance of the [Lobby-Service](https://github.com/kartoffelquadrat/LobbyService), with enabled [Lobby-Service Web Interface](https://github.com/kartoffelquadrat/LobbyServiceWebInterface/) to run.
 It registers at the lobbyservice, using a game-*service* account.
 
 Use one of the below deployment options to try the game:
