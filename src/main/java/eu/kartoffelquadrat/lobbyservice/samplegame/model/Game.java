@@ -31,4 +31,11 @@ public interface Game {
      * @return a deep copy of the player array associated to a game.
      */
     PlayerReadOnly[] getPlayers();
+
+    /**
+     * Flag to indicate whether a game instance is not modifiable any more.
+     *
+     * @return true if no more moves are possible. False otherwise.
+     */
+    boolean isFinished();
 }
