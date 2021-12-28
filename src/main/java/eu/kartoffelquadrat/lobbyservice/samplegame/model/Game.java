@@ -1,7 +1,9 @@
 package eu.kartoffelquadrat.lobbyservice.samplegame.model;
 
 /**
- * Generic game interface with method common to all board game implementations.
+ * Generic game interface with methods common to all board game implementations. The Game represents a persistable game
+ * state allowing full game replay. This includes a reference to a game Board as well as e.g. gameplay history snapshots
+ * or random generator seed values.
  *
  * @Author: Maximilian Schiedermeier
  * @Date: December 2020
