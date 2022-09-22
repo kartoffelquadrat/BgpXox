@@ -136,6 +136,9 @@
         <!--prod profile is intended for dockerized deployment of Xox.-->
         <profile>
             <id>prod</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <activatedProperties>prod</activatedProperties>
                 <packaging.type>jar</packaging.type>
@@ -144,9 +147,6 @@
         <!--war profile is intended for webapp deployment of in an existing webserver.-->
         <profile>
             <id>war</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <activatedProperties>war</activatedProperties>
                 <packaging.type>war</packaging.type>
