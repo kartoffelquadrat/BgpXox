@@ -120,6 +120,9 @@
         <!--dev profile is intended for native deployment of Xox.-->
         <profile>
             <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <activatedProperties>dev</activatedProperties>
                 <packaging.type>jar</packaging.type>
@@ -136,9 +139,6 @@
         <!--prod profile is intended for dockerized deployment of Xox.-->
         <profile>
             <id>prod</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <activatedProperties>prod</activatedProperties>
                 <packaging.type>jar</packaging.type>
