@@ -149,7 +149,7 @@ public class Registrator {
                 logger.error("LobbyService (" + lobbyServiceUrl + ") rejected registration of Game. Server replied:\n" + response.getStatus() + " - " + response.getBody());
                 throw new RuntimeException("LobbyService rejected registration of Game. Server replied:\n" + response.getStatus() + " - " + response.getBody());
             }
-            logger.info("Succesfully registered at LobbyService.");
+            logger.info("Successfully registered at LobbyService.");
         }
 
         // In case of connection issues (and retry flag set) give it a second try in 30 seconds.
